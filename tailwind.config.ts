@@ -7,10 +7,16 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      generalSans: ["var(--font-generalSans)"],
+      ttNorms: ["var(--font-ttNorms)"],
+    },
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        colors: {
+          certFillBlue: "#011520",
+          certFillLightBlue: "#00A2B9",
+        },
       },
     },
   },
