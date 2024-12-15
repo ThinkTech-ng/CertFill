@@ -15,7 +15,7 @@ interface FormData {
   courses: Course[];
 }
 
-function Form() {
+function GradeForm() {
 
   const router = useRouter()
   const [learningTracks, setLearningTracks] = useState<string[]>([""]);
@@ -30,7 +30,7 @@ function Form() {
     setLearningTracks(updatedTracks);
   };
 
-  const createProgram = async (formData: FormData) => {
+  const createCourse = async (formData: FormData) => {
     try {
       const response = await fetch("https://certfillapi.reckonio.com/api/programs", {
         method: "POST",
@@ -58,14 +58,14 @@ function Form() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData: FormData = {
-      name: (e.currentTarget.elements.namedItem("programName") as HTMLInputElement).value,
+      name: (e.currentTarget.elements.namedItem("gradeName") as HTMLInputElement).value,
       description: (e.currentTarget.elements.namedItem("description") as HTMLTextAreaElement).value,
       startDate: "2024-04-01T00:00:00.000Z",
       endDate: "2024-09-30T23:59:59.000Z",
       courses: learningTracks.filter((track) => track.trim() !== "").map((track) => ({ name: track })),
     };
     console.log("Form submitted:", formData);
-    createProgram(formData);
+    createCourse(formData);
 
     // Clear the form after submission
     e.currentTarget.reset();
@@ -79,7 +79,7 @@ function Form() {
         <div className="formField">
             <input
               type="text"
-              name="programName"
+              name="gradeName"
               placeholder="Program Name"
               className="inputField  "
               required
@@ -127,4 +127,4 @@ function Form() {
   );
 }
 
-export default Form;
+export default GradeForm;

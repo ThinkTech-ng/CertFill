@@ -19,12 +19,7 @@ export default function Projects() {
         <span className="text-2xl">Create your Projects</span>
         <div className="w-full flex flex-col min-h-60 justify-between">
           <Form />
-          <Link
-            className="mainButton text-xl font-semibold h-[68px] capitalize"
-            href="/admin/projects"
-          >
-            Create Project
-          </Link>
+    
         </div>
       </div>
     </div>

@@ -10,3 +10,11 @@
 .mainButton {
   @apply bg-colors-certFillLightBlue text-white w-full max-w-[700px] flex items-center justify-center rounded-xl;
 }
+.formField{
+  @apply w-full max-w-[700px];
+}
+
+
+.inputField{
+  @apply w-full outline-none text-black placeholder:text-[#888585] border border-[#888585] text-black  p-4 rounded-xl focus:border-[#00a2b9] 
+}
