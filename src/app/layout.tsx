@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import {
+  Inter,
+  Roboto,
+  Lora,
+  Poppins,
+  Montserrat,
+  Dancing_Script,
+} from "next/font/google";
 import "./globals.css";
 
 const generalSans = localFont({
@@ -42,7 +50,31 @@ const generalSans = localFont({
   ],
   variable: "--font-generalSans",
 });
+export const interFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
+export const dancingFont = Dancing_Script({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-dancing",
+});
+export const robotoFont = Roboto({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-roboto",
+});
+export const loraFont = Lora({ subsets: ["latin"], variable: "--font-lora" });
+export const poppinsFont = Poppins({
+  subsets: ["latin"],
+  weight: "600",
+  variable: "--font-poppins",
+});
+export const montserratFont = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
 const ttNorms = localFont({
   src: [
     {
@@ -67,7 +99,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${generalSans.variable} ${ttNorms.variable} antialiased`}
+        className={`${generalSans.variable} ${ttNorms.variable} ${dancingFont.variable} ${interFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable} antialiased`}
       >
         {children}
       </body>

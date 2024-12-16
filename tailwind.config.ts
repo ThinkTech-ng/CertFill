@@ -8,9 +8,17 @@ export default {
   ],
   theme: {
     fontFamily: {
+      // Add your custom fonts with fallback
       generalSans: ["var(--font-generalSans)"],
       ttNorms: ["var(--font-ttNorms)"],
+      inter: ["var(--font-inter)"],
+      roboto: ["var(--font-roboto)"],
+      lora: ["var(--font-lora)"],
+      poppins: ["var(--font-poppins)"],
+      "dancing-script": ["var(--font-dancing)"],
+      montserrat: ["var(--font-montserrat)"],
     },
+
     extend: {
       colors: {
         colors: {
