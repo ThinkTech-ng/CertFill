@@ -7,7 +7,9 @@ interface GradeFormProps {
 
 function GradeForm({ courseId }: GradeFormProps) {
   const [certificate, setCertificate] = useState<File | null>(null);
+  const [recipientsFile, setRecipientsFile] = useState<File | null>(null);
   const [certificateURL, setCertificateURL] = useState<string | null>(null);
+  const [certificateId, setCertificateId] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [box, setBox] = useState<{
     x: number;
@@ -32,7 +34,7 @@ function GradeForm({ courseId }: GradeFormProps) {
         setCertificateURL(fileURL);
         setPopupVisible(true); // Show the popup
       } else if (event.target.name === "recipients") {
-        uploadRecipientFile(file);
+        setRecipientsFile(file);
       }
     }
   };
@@ -55,7 +57,7 @@ function GradeForm({ courseId }: GradeFormProps) {
     }
   };
   //upload to server
-  const uploadRecipientFile = async (file: File) => {
+  const uploadRecipientFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("recipients", file);
 
@@ -78,12 +80,14 @@ function GradeForm({ courseId }: GradeFormProps) {
 
       const data = await response.json();
       console.log("Recipient file uploaded successfully:", data);
+      return data.data;
     } catch (error) {
       console.error("Error uploading recipient file:", error);
+      throw error;
     }
   };
 
-  const uploadCertFile = async (file: File) => {
+  const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("certificate", file);
 
@@ -101,13 +105,15 @@ function GradeForm({ courseId }: GradeFormProps) {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to upload recipient file");
+        throw new Error("Failed to upload certificate file");
       }
 
       const data = await response.json();
-      console.log("Recipient file uploaded successfully:", data);
+      console.log("Certificate file uploaded successfully:", data);
+      return data.data; // Assuming the API returns the URL in the 'url' field
     } catch (error) {
-      console.error("Error uploading recipient file:", error);
+      console.error("Error uploading certificate file:", error);
+      throw error;
     }
   };
 
@@ -117,18 +123,18 @@ function GradeForm({ courseId }: GradeFormProps) {
       return;
     }
 
-    const certificateDetails = {
-      course: courseId,
-      fontSize: 16,
-      fontFamily: selectedFont,
-      position: {
-        x: box.x,
-        y: box.y,
-      },
-      certificateFile: certificate.name,
-    };
-
     try {
+      const certificateFileURL = await uploadCertFile(certificate);
+      const certificateDetails = {
+        course: courseId,
+        fontSize: 16,
+        fontFamily: selectedFont,
+        position: {
+          x: box.x,
+          y: box.y,
+        },
+        certificateFile: certificateFileURL,
+      };
       const response = await fetch(
         "https://certfillapi.reckonio.com/api/certificates",
         {
@@ -148,8 +154,44 @@ function GradeForm({ courseId }: GradeFormProps) {
 
       const data = await response.json();
       console.log("Certificate details saved successfully:", data);
+      setCertificateId(data._id);
+      console.log("Certificate details saved successfully:", data);
     } catch (error) {
       console.error("Error saving certificate details:", error);
+    }
+  };
+
+  const handleSaveCourse = async () => {
+    try {
+      if (!recipientsFile || !certificateId) {
+        throw new Error("Please upload a recipients file and certificate");
+      }
+      const recipipentFileUrl = await uploadRecipientFile(recipientsFile);
+      const courseUpdate = {
+        certificateId: certificateId,
+        recipientsCsvFile: recipipentFileUrl,
+      };
+      const response = await fetch(
+        `https://certfillapi.reckonio.com/api/courses/${courseId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Api-Key":
+              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
+          },
+          method: "PUT",
+          body: JSON.stringify(courseUpdate),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save course");
+      }
+
+      const data = await response.json();
+      console.log("Course saved successfully:", data);
+    } catch (error) {
+      console.error("Error saving course:", error);
     }
   };
 
@@ -232,12 +274,14 @@ function GradeForm({ courseId }: GradeFormProps) {
     document.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("mousemove", handleMouseMove);
   };
+
   const handleSave = async () => {
     if (!certificate) {
       alert("Please upload a certificate.");
       return;
     }
 
+    saveCertificateDetails();
     setPopupVisible(false); // Close the popup
     router.refresh(); // Refresh or navigate to another page
   };
@@ -271,7 +315,7 @@ function GradeForm({ courseId }: GradeFormProps) {
           />
           <button
             type="button"
-            onClick={handleCertificateUpload()}
+            onClick={handleCertificateUpload}
             className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
           >
             Attach
@@ -296,6 +340,14 @@ function GradeForm({ courseId }: GradeFormProps) {
             Upload
           </button>
         </div>
+
+        <button
+          className="mainButton mt-2 h-[68px] capitalize"
+          type="button"
+          onClick={handleSaveCourse}
+        >
+          save
+        </button>
 
         {popupVisible && certificateURL && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
