@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import logo from "@/public/certLogo.svg";
 import Form from "./create";
 
@@ -19,7 +18,6 @@ export default function Projects() {
         <span className="text-2xl">Create your Projects</span>
         <div className="w-full flex flex-col min-h-60 justify-between">
           <Form />
-    
         </div>
       </div>
     </div>

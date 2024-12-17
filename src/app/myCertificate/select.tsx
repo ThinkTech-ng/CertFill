@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
@@ -20,7 +21,6 @@ interface FormData {
   courseId: string;
   email: string;
 }
-
 
 function Form() {
   const router = useRouter();
@@ -85,7 +85,11 @@ function Form() {
     };
 
     // Navigate to the certificate page with the form data
-    router.push(`/myCertificate/download?programId=${selectedProgram}&courseId=${selectedCourse}&email=${encodeURIComponent(email)}`);
+    router.push(
+      `/myCertificate/download?programId=${selectedProgram}&courseId=${selectedCourse}&email=${encodeURIComponent(
+        email
+      )}`
+    );
   };
 
   return (
@@ -161,4 +165,3 @@ function Form() {
 }
 
 export default Form;
-
