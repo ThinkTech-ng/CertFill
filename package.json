@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.1.5",
+    "html2pdf-ts": "^1.2.23",
+    "html2pdf.js": "^0.10.2",
+    "jspdf": "^2.5.2",
     "next": "15.0.4",
     "pdfjs-dist": "^4.9.155",
     "react": "^19.0.0",

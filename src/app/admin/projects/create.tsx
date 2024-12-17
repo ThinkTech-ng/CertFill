@@ -49,7 +49,7 @@ function Form() {
       console.log("Program created successfully:", data);
 
       // Navigate to the appropriate route
-      router.push(`/admin/projects/${data.id}/courses`);
+      router.push(`/admin/projects/${data._id}/courses`);
     } catch (error) {
       console.error("Error creating program:", error);
     }

@@ -22,6 +22,12 @@ function GradeForm({ courseId }: GradeFormProps) {
   const [selectedFont, setSelectedFont] = useState<string>("font-inter");
   const router = useRouter();
   const boxRef = useRef<HTMLDivElement>(null);
+  const [selectedFontSize, setSelectedFontSize] = useState<number>(16); // Default to 16px
+
+// Add a handler for font size changes
+const handleFontSizeChange = (size: number) => {
+  setSelectedFontSize(size);
+};
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -87,6 +93,8 @@ function GradeForm({ courseId }: GradeFormProps) {
     }
   };
 
+  console.log(box)
+
   const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("certificate", file);
@@ -127,7 +135,7 @@ function GradeForm({ courseId }: GradeFormProps) {
       const certificateFileURL = await uploadCertFile(certificate);
       const certificateDetails = {
         course: courseId,
-        fontSize: 16,
+        fontSize: selectedFontSize,
         fontFamily: selectedFont,
         position: {
           x: box.x,
@@ -209,6 +217,7 @@ function GradeForm({ courseId }: GradeFormProps) {
     const y = e.clientY - containerRect.top - boxHeight / 2;
 
     setBox({ x, y, text: "Enter Name", width: boxWidth, height: boxHeight });
+    console.log(x,y)
   };
 
   const handleTextChange = (text: string) => {
@@ -382,6 +391,25 @@ function GradeForm({ courseId }: GradeFormProps) {
                       </option>
                     ))}
                   </select>
+                </div>  <label
+    htmlFor="font-size-selector"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Select Font Size
+  </label>
+  <select
+    id="font-size-selector"
+    value={selectedFontSize}
+    onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+    className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+  >
+    {[14, 16, 18, 20, 24, 30].map((size) => (
+      <option key={size} value={size}>
+        {size}px
+      </option>
+    ))}
+  </select><div>
+
                 </div>
 
                 <button
@@ -412,11 +440,12 @@ function GradeForm({ courseId }: GradeFormProps) {
                     ref={boxRef}
                     className={`absolute p-2 text-black cursor-move text-sm font-bold ${
                       isFocused ? "border-2 border-blue-500 outline-none" : ""
-                    } ${selectedFont}`}
+                    } ${selectedFont} ${selectedFontSize}`}
                     style={{
                       top: `${box.y}px`,
                       left: `${box.x}px`,
                       width: `${box.width}px`,
+                       fontSize: `${selectedFontSize}px`, 
                     }}
                     onClick={handleFocus} // Set focus when clicking the box
                     onBlur={handleBlur} // Remove focus when clicking outside
