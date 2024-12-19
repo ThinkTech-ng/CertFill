@@ -7,6 +7,18 @@
   --foreground: #171717;
 }
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari, and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+  display: none;
+  }
+  /* Hide scrollbar for IE, Edge, and Firefox */
+  .no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  }
+  }
+
 .mainButton {
   @apply bg-colors-certFillLightBlue text-white w-full max-w-[700px] flex items-center justify-center rounded-xl;
 }

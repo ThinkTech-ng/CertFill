@@ -7,6 +7,7 @@ import Image from "next/image";
 import logo from "@/public/certLogo.svg";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import GradeForm from "./createGrade";
+import Link from "next/link";
 
 interface ProgramDetails {
   name: string;
@@ -69,11 +70,11 @@ function ProgramDetailsPage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden min-h-[700px] flex flex-row">
+    <div className="h-screen overflow-hidden min-h-[700px] flex flex-row font-generalSans">
       <div className="font-generalSans h-full w-1/2 max-w-[735px] justify-between flex flex-col lg:min-w-[500px] bg-colors-certFillBlue p-20 text-white">
-        <div>
+      <Link href='/admin'>
           <Image src={logo} alt="certificate" />
-        </div>
+        </Link>
         <div className="text-5xl pt-6 font-semibold flex flex-col">
           <span>Seamless Certs,</span>
           <span>Delivered Fast</span>
