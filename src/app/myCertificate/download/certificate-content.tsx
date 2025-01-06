@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
-import { PDFDocument, rgb,StandardFonts, } from 'pdf-lib';
-
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 function CertificateContent() {
   const printRef = React.useRef(null);
@@ -42,13 +42,12 @@ function CertificateContent() {
       }
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       setCertificate(data);
     } catch (error) {
       console.error("Error getting certificate:", error);
     }
   };
-
 
   const handleDownloadPdf = async () => {
     try {
@@ -97,8 +96,6 @@ function CertificateContent() {
       console.error("Error generating PDF:", error);
     }
   };
-
-
 
   if (!certificate) {
     return <p>Loading certificate...</p>;
