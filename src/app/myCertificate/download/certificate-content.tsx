@@ -1,12 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
-import { PDFDocument, rgb,StandardFonts, } from 'pdf-lib';
-
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 function CertificateContent() {
   const printRef = React.useRef(null);
@@ -44,42 +42,41 @@ function CertificateContent() {
       }
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       setCertificate(data);
     } catch (error) {
       console.error("Error getting certificate:", error);
     }
   };
 
-  
   const handleDownloadPdf = async () => {
     try {
       // Fetch the certificate PDF
       const response = await fetch(certificate.certificate.certificateFile);
       const existingPdfBytes = await response.arrayBuffer();
-  
+
       // Load the PDF
       const pdfDoc = await PDFDocument.load(existingPdfBytes);
-  
+
       // Embed a font for measuring text width
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  
+
       // Add a new page or modify an existing one
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const { width: pageWidth, height: pageHeight } = firstPage.getSize();
-  
+
       // Dynamic positioning
       const text = "Benjamin Adeboye Ihunnaya";
       const fontSize = certificate.certificate.fontSize || 16;
-  
+
       // Measure the text width
       const textWidth = font.widthOfTextAtSize(text, fontSize);
-  
+
       // Center the text
       const x = (pageWidth - textWidth) / 2; // Calculate x for center alignment
       const y_pdf_lib = pageHeight - certificate.certificate.position.y;
-  
+
       // Draw recipient's name
       firstPage.drawText(text, {
         x,
@@ -88,10 +85,10 @@ function CertificateContent() {
         font,
         color: rgb(0, 0, 0),
       });
-  
+
       // Serialize the PDF to bytes
       const pdfBytes = await pdfDoc.save();
-  
+
       // Create a Blob and download using file-saver
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
       saveAs(blob, "certificate.pdf");
@@ -99,8 +96,6 @@ function CertificateContent() {
       console.error("Error generating PDF:", error);
     }
   };
-  
-  
 
   if (!certificate) {
     return <p>Loading certificate...</p>;
