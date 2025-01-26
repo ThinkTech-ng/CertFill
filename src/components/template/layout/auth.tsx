@@ -16,6 +16,7 @@ import googleIcon from "@/public/icons/google-icon.svg";
 import { AuthFormType, FormField } from "@/interface/form.dto";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DynamicForm from "@/components/organism/forms/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface AuthFormProps {
   registerForm: FormField[];
@@ -23,12 +24,14 @@ interface AuthFormProps {
   handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
 }
 export default function AuthForm(props: AuthFormProps) {
+
+  const search = useSearchParams()
+  
   const renderFormTemplate = (
     formTemplate: FormField[],
     template: AuthFormType
   ) => (
     <>
-      <div className="pt-1" />
       <Button
         variant="outline"
         className="w-full h-[46px] text-base font-normal"
@@ -88,8 +91,8 @@ export default function AuthForm(props: AuthFormProps) {
   );
   return (
     <div className="container relative min-h-screen flex items-center justify-center">
-      <div className="mx-auto w-full max-w-[440px] space-y-6 ">
-        <Tabs defaultValue="create" className="w-full  pb-7 mb-4">
+      <div className="mx-auto w-full max-w-[440px] space-y-6 min-h-[700px]">
+        <Tabs defaultValue={search.get('action')=== 'login' ?"login" : "register"} className="w-full pb-7 mb-4">
           <TabsList className="w-full grid grid-cols-2 mb-8 bg-transparent">
             <TabsTrigger
               value="login"
@@ -98,16 +101,16 @@ export default function AuthForm(props: AuthFormProps) {
               Log in
             </TabsTrigger>
             <TabsTrigger
-              value="create"
+              value="register"
               className="text-base font-normal bg-transparent data-[state=active]:border-b-gray-800 rounded-none border-b-2 data-[state=active]:font-bold pb-4 data-[state=active]:shadow-none data-[state=inactive]:text-gray-500"
             >
               Create Account
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="create" className="space-y-6 flex flex-col">
+          <TabsContent value="register">
             {renderFormTemplate(props.registerForm, "register")}
           </TabsContent>
-          <TabsContent value="login" className="space-y-6 flex flex-col">
+          <TabsContent value="login">
             {renderFormTemplate(props.loginForm, "login")}
           </TabsContent>
         </Tabs>

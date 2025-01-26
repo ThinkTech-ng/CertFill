@@ -8,9 +8,10 @@ export type FormField = {
     | "number"
     | "select"
     | "checkbox"
-    | "radio";
+    | "radio"
+    | "otp";
   name: string;
-  label: string;
+  label?: string;
   placeholder?: string;
   options?: { value: string; label: string }[]; // For select, radio, and checkbox
   validation?: z.ZodTypeAny; // Custom validation schema

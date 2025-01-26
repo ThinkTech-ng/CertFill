@@ -14,8 +14,15 @@ import { toast } from "sonner";
 import { AuthError } from "@/interface/error.dto";
 import { validateDynamicFormError } from "@/utils/validationError";
 import { UseFormReturn } from "react-hook-form";
+import { User } from "@/interface/user.dto";
+import { useRouter, useSearchParams } from "next/navigation";
+import * as rout from "next/navigation";
+import React from "react";
+import { useSessionStorage } from 'usehooks-ts'
 
 export default function Home() {
+  const router = useRouter()
+  const [, setTempEmail] = useSessionStorage('temp-email', null)
   const formSettings: FormField[] = [
     {
       type: "email",
@@ -42,15 +49,18 @@ export default function Home() {
 
   const handleSubmit = (type: AuthFormType) => (formState: UseFormReturn) => async (data: Record<string, any>) => {
     const form = type === 'login' ? formSettings : formRegisterSettings
-    console.log({ formState});
+    setTempEmail(data.email)
     
     try {
     
-    const response = await customFetch<{ id: number; title: string }[]>(`/auth/${type}`, { method: 'POST', body: JSON.stringify(data)})
-    // .then((data) => console.log("Data:", data))
-    // .catch((error) => console.error("Error:", error));
+    const response = await customFetch<{ data: User, status: AuthError['status'] }>(`/auth/${type}`, { method: 'POST', body: JSON.stringify(data)})
 
+    if (type === 'register' && response.data.email && response.data.id && response.status === 'success') {
+      // regirest to verify user
+      router.push('/verify')
+    }
     console.log("Form Data:", { data, type, response });
+    router.push('/admib')
     } catch (e){
       const error = e as AuthError
       if (error.message == 'Validation failed') {
@@ -59,10 +69,18 @@ export default function Home() {
         formState.control._setErrors(fields)
         return;
       }
+      if (error.code === 'EMAIL_VERIFICATION') {
+
+        router.push('/verify')
+      }
       toast.error(error?.message)
     }
   };
 
+  React.useEffect(()=>{
+    router.prefetch('/admin')
+    router.prefetch('/verify')
+  }, [])
   return (
     <AppLayout>
       <AuthForm

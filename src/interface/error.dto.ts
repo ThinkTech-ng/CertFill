@@ -1,1 +1,1 @@
-export type AuthError = { status: string, message: string, errors: {field: string, message: string}[]}
+export type AuthError = { status: "success" | "error", message: string, errors: {field: string, message: string}[], code?: string}

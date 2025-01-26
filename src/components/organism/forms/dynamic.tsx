@@ -3,9 +3,10 @@ import { useForm, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField } from "@/interface/form.dto";
 import { generateValidationSchema } from "@/utils/generateValidationSchema";
-import { Input, PasswordInput } from "@/components/molecule/input";
+import { Input, OtpInput, PasswordInput } from "@/components/molecule/input";
 
 interface DynamicFormProps {
+  hideError?: boolean
   formSettings: FormField[];
   onSubmit: (form: UseFormReturn)=>SubmitHandler<Record<string, any>>;
   children: (form: UseFormReturn) => React.ReactNode;
@@ -15,6 +16,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   formSettings,
   onSubmit,
   children,
+  hideError,
 }) => {
   const validationSchema = generateValidationSchema(formSettings);
 
@@ -77,7 +79,25 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             type={field.type}
             id={field.name}
             placeholder={field.placeholder}
-            {...register(field.name)}
+            {...register(field.name) as any}
+          />
+        );
+      case "otp":
+        const action = register(field.name)
+        return (
+          <OtpInput
+            className="h-[46px]"
+            id={field.name}
+            placeholder={field.placeholder}
+            inputMode='search'
+            {...field as any}
+            {...action as any}  
+            onChange={(value)=>{
+              form.setValue(field.name, value, { shouldValidate: true})   
+            }}
+            onComplete={(value)=>{
+              form.setValue(field.name, value, { shouldValidate: true})   
+            }}
           />
         );
       default:
@@ -95,7 +115,6 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       form.watch(name)
     })
   },[])
-  console.log(errors, errors?.name);
   
   return (
     <form onSubmit={handleSubmit(onSubmit(form))}>
@@ -109,7 +128,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             {field.label}
           </label>
           {renderFormInput(field)}
-          {errors[field.name] && (
+          {!hideError && errors[field.name] && (
             <p className="text-cloakGrey text-red-500 text-sm flex ">
              <span className="text-[10px] pr-1">&#9679;</span>
              <span> {(errors[field.name]?.message || errors[field.name])?.toString()}</span>

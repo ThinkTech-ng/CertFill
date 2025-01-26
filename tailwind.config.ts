@@ -35,6 +35,7 @@ export default {
 		certFillBlue: "#00A2BA",
 		onyx: "#444444",
     cloakGrey: "#636363",
+    neptuneSDream: "#003566",
 		tin: "#919090",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -47,7 +48,7 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#00A2BA",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
