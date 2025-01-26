@@ -34,6 +34,7 @@ export default {
         },
 		certFillBlue: "#00A2BA",
 		onyx: "#444444",
+    cloakGrey: "#636363",
 		tin: "#919090",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

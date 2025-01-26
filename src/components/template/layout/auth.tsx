@@ -14,13 +14,13 @@ import Image from "next/image";
 import Link from "next/link";
 import googleIcon from "@/public/icons/google-icon.svg";
 import { AuthFormType, FormField } from "@/interface/form.dto";
-import { SubmitHandler } from "react-hook-form";
+import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DynamicForm from "@/components/organism/forms/dynamic";
 
 interface AuthFormProps {
   registerForm: FormField[];
   loginForm: FormField[];
-  handleSubmit: (type: AuthFormType) => SubmitHandler<Record<string, any>>;
+  handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
 }
 export default function AuthForm(props: AuthFormProps) {
   const renderFormTemplate = (
@@ -79,7 +79,7 @@ export default function AuthForm(props: AuthFormProps) {
               disabled={!form.formState.isValid || form.formState.isSubmitting}
               className="w-full h-[46px] text-base  mt-4"
             >
-              Create Account
+              {template === 'login' ? "Login to Account": "Create Account"}
             </Button>
           </>
         )}

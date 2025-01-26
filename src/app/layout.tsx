@@ -8,6 +8,7 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "@/components/molecule/sonner";
 
 const generalSans = localFont({
   src: [
@@ -96,6 +97,7 @@ export default function RootLayout({
         className={`${generalSans.variable} ${interFont.variable} ${dancingFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable}`}
       >
         {children}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

@@ -7,7 +7,7 @@ import { Input, PasswordInput } from "@/components/molecule/input";
 
 interface DynamicFormProps {
   formSettings: FormField[];
-  onSubmit: SubmitHandler<Record<string, any>>;
+  onSubmit: (form: UseFormReturn)=>SubmitHandler<Record<string, any>>;
   children: (form: UseFormReturn) => React.ReactNode;
 }
 
@@ -27,7 +27,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     formState: { errors },
   } = form;
 
-  const renderFormInput = (field) => {
+
+  const renderFormInput = (field: FormField) => {
     switch (field.type) {
       case "select":
         return (
@@ -89,8 +90,15 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         />;
     }
   };
+  React.useEffect(()=>{
+    formSettings.forEach(({ name})=>{
+      form.watch(name)
+    })
+  },[])
+  console.log(errors, errors?.name);
+  
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit(form))}>
       {formSettings.map((field) => (
         <div
           className="space-y-2"
@@ -102,8 +110,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           </label>
           {renderFormInput(field)}
           {errors[field.name] && (
-            <p style={{ color: "red" }}>
-              {errors[field.name]?.message?.toString()}
+            <p className="text-cloakGrey text-red-500 text-sm flex ">
+             <span className="text-[10px] pr-1">&#9679;</span>
+             <span> {(errors[field.name]?.message || errors[field.name])?.toString()}</span>
             </p>
           )}
         </div>
