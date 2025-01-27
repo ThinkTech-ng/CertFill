@@ -38,6 +38,7 @@ export default {
     neptuneSDream: "#003566",
 		tin: "#919090",
     jumbo: "#888585",
+    whiteout: "#fbfbfb",
 
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

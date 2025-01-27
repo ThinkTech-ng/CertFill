@@ -1,15 +1,17 @@
 import React from "react";
-import { useForm, SubmitHandler, UseFormReturn } from "react-hook-form";
+import { useForm, SubmitHandler, UseFormReturn, useFieldArray, UseFieldArrayReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField } from "@/interface/form.dto";
 import { generateValidationSchema } from "@/utils/generateValidationSchema";
 import { Input, OtpInput, PasswordInput } from "@/components/molecule/input";
+import { Textarea } from "@/components/molecule/textarea";
 
 interface DynamicFormProps {
   hideError?: boolean
   formSettings: FormField[];
   onSubmit: (form: UseFormReturn)=>SubmitHandler<Record<string, any>>;
   children: (form: UseFormReturn) => React.ReactNode;
+  defaultValues?: Record<any, any>
 }
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
@@ -17,11 +19,13 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
   children,
   hideError,
+  defaultValues
 }) => {
   const validationSchema = generateValidationSchema(formSettings);
 
   const form = useForm<Record<string, any>>({
     resolver: zodResolver(validationSchema),
+    defaultValues
   });
   const {
     register,
@@ -100,6 +104,14 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             }}
           />
         );
+        case "textarea":
+          return <Textarea 
+          className="h-[46px]"
+          type={field.type}
+          id={field.name}
+          placeholder={field.placeholder}
+          {...register(field.name)}
+          />
       default:
        return <Input
           className="h-[46px]"
@@ -142,3 +154,22 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 };
 
 export default DynamicForm;
+
+interface DynamicArrayFormProps {
+  name: string
+  children: (value: UseFieldArrayReturn)=> string | React.ReactNode
+  control: UseFormReturn['control']
+}
+export const DynamicArrayForm: React.FC<DynamicArrayFormProps> = ({ control, name, children }) => {
+  const form = useFieldArray({
+    control,
+    name,
+  });
+
+  return (
+    <>
+      {children(form)}
+    </>
+  );
+};
+

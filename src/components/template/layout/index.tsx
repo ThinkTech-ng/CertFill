@@ -33,8 +33,10 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="sm:h-full overflow-auto grow bg-white py-15 px-2 sm:p-20 text-black flex flex-col justify-between ">
+      <div className="sm:h-full overflow-auto grow bg-white py-15 px-2 sm:p-20 text-black">
+      <div className=" flex flex-col justify-between w-full h-full max-w-[600px] m-auto">
         {props.children}
+      </div>
       </div>
     </div>
   );

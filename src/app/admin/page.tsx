@@ -10,6 +10,7 @@ import React from "react";
 import { LoginUser } from "@/interface/user.dto";
 import { InfoCard, ListCard } from "@/components/molecule/info-card";
 import { Button } from "@/components/molecule/button";
+import Link from "next/link";
 export default function Admin() {
   const {user, programs} = (React.use(AppContext))
   
@@ -34,10 +35,11 @@ export default function Admin() {
         />
       </div>
 
+<Link href="/admin/projects/create">
       <Button variant={'dotted'} className="font-medium p-6 w-full border-black">
       Create New Certificate
       </Button>
-
+</Link>
       {programs?.length <= 0 && <div className="w-full flex items-center gap-5 pt-10 pb-5 font-medium texr-center">
         You have not created any program yet
         </div>}

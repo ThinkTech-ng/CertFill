@@ -10,7 +10,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm inputField h-[45px]",
+          "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm inputField h-[50px]",
           className
         )}
         ref={ref}
