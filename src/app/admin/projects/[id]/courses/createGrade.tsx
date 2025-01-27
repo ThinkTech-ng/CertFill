@@ -154,7 +154,8 @@ function GradeForm({ courseId }: GradeFormProps) {
       console.log("Course saved successfully:", response.data);
       toast.success("Course saved successfully");
     } catch (error) {
-      toast.error("Error saving course");
+      console.log(error)
+      toast.error(error.message || typeof error === 'strinh' ? error :"Error saving course");
     }
   };
 
