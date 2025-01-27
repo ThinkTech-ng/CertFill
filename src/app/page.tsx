@@ -14,15 +14,17 @@ import { toast } from "sonner";
 import { AuthError } from "@/interface/error.dto";
 import { validateDynamicFormError } from "@/utils/validationError";
 import { UseFormReturn } from "react-hook-form";
-import { User } from "@/interface/user.dto";
+import { LoginUser, User } from "@/interface/user.dto";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as rout from "next/navigation";
 import React from "react";
-import { useSessionStorage } from 'usehooks-ts'
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
+import { AppContext } from "@/service/context";
 
 export default function Home() {
-  const router = useRouter()
-  const [, setTempEmail] = useSessionStorage('temp-email', null)
+  const router = useRouter();
+  const [, setTempEmail] = useSessionStorage("temp-email", null);
+  const { setUser } = React.use(AppContext);
   const formSettings: FormField[] = [
     {
       type: "email",
@@ -47,47 +49,56 @@ export default function Home() {
     ...formSettings,
   ];
 
-  const handleSubmit = (type: AuthFormType) => (formState: UseFormReturn) => async (data: Record<string, any>) => {
-    const form = type === 'login' ? formSettings : formRegisterSettings
-    setTempEmail(data.email)
-    
-    try {
-    
-    const response = await customFetch<{ data: User, status: AuthError['status'] }>(`/auth/${type}`, { method: 'POST', body: JSON.stringify(data)})
+  const handleSubmit =
+    (type: AuthFormType) =>
+    (formState: UseFormReturn) =>
+    async (data: Record<string, any>) => {
+      const form = type === "login" ? formSettings : formRegisterSettings;
+      setTempEmail(data.email);
 
-    if (type === 'register' && response.data.email && response.data.id && response.status === 'success') {
-      // regirest to verify user
-      router.push('/verify')
-    }
-    console.log("Form Data:", { data, type, response });
-    router.push('/admib')
-    } catch (e){
-      const error = e as AuthError
-      if (error.message == 'Validation failed') {
-        const { message, fields} = validateDynamicFormError(error.errors, form)
-        toast.error(message.join(', \n\t'))
-        formState.control._setErrors(fields)
-        return;
+      try {
+        const response = await customFetch<{
+          data: User;
+          status: AuthError["status"];
+        }>(`/auth/${type}`, { method: "POST", body: JSON.stringify(data) });
+
+        if (
+          type === "register" &&
+          response.data.email &&
+          response.data.id &&
+          response.status === "success"
+        ) {
+          router.push("/verify");
+        }
+        setUser(response.data as unknown as LoginUser);
+        router.push("/admin");
+      } catch (e) {
+        const error = e as AuthError;
+        if (error.message == "Validation failed") {
+          const { message, fields } = validateDynamicFormError(
+            error.errors,
+            form
+          );
+          toast.error(message.join(", \n\t"));
+          formState.control._setErrors(fields);
+          return;
+        }
+        if (error.code === "EMAIL_VERIFICATION") {
+          router.push("/verify");
+        }
+        toast.error(error?.message);
       }
-      if (error.code === 'EMAIL_VERIFICATION') {
+    };
 
-        router.push('/verify')
-      }
-      toast.error(error?.message)
-    }
-  };
-
-  React.useEffect(()=>{
-    router.prefetch('/admin')
-    router.prefetch('/verify')
-  }, [])
+  React.useEffect(() => {
+    router.prefetch("/admin");
+    router.prefetch("/verify");
+  }, []);
   return (
-    <AppLayout>
-      <AuthForm
-        registerForm={formRegisterSettings}
-        loginForm={formSettings}
-        handleSubmit={handleSubmit}
-      />
-    </AppLayout>
+    <AuthForm
+      registerForm={formRegisterSettings}
+      loginForm={formSettings}
+      handleSubmit={handleSubmit}
+    />
   );
 }

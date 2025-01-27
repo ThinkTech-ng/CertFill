@@ -97,7 +97,7 @@ export default function VerifyUser() {
     }, 1000);
   }, []);
   return (
-    <AppLayout>
+    <>
       <div className="text-center flex flex-col gap-5 py-10 px-5">
         <h3 className="text-3xl font-bold  text-neptuneSDream">
           Verify your email{" "}
@@ -140,6 +140,6 @@ export default function VerifyUser() {
           )}
         </DynamicForm>
       </div>
-    </AppLayout>
+    </>
   );
 }

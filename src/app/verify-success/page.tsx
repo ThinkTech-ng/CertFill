@@ -28,7 +28,7 @@ export default function VerifyUser() {
     router.prefetch("/?action=login");
   }, []);
   return (
-    <AppLayout>
+    <>
       <div className="text-center flex flex-col gap-5 justify-center items-center pt-10 px-5">
       <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M43.75 50L62.1376 60.8714C72.8575 67.2094 77.1425 67.2094 87.8625 60.8714L106.25 50" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,6 +56,6 @@ export default function VerifyUser() {
               </Button>
               
               </div>
-    </AppLayout>
+    </>
   );
 }

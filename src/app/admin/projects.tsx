@@ -46,7 +46,7 @@ const Projects: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  if (projectsList.length === 0) {
+  if (!projectsList?.length) {
     return (
       <div className="w-full flex flex-col min-h-60 justify-between">
         <span className="py-8 text-center text-xl flex items-center mx-auto">
@@ -70,7 +70,7 @@ const Projects: React.FC = () => {
       </div>
    
       <div className="flex flex-col gap-2 h-60 overflow-scroll no-scrollbar my-3">
-        {projectsList.map((project) => (
+        {projectsList?.map((project) => (
           <Link href={`/admin/projects/${project._id}/courses`} key={project._id} className="hover:text-blue-800 text-black">
             <h3 className="text-lg font-medium">{project.name}</h3>
            

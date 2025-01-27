@@ -37,6 +37,8 @@ export default {
     cloakGrey: "#636363",
     neptuneSDream: "#003566",
 		tin: "#919090",
+    jumbo: "#888585",
+
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -52,7 +54,7 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#003566",
           foreground: "hsl(var(--secondary-foreground))",
         },
         muted: {
