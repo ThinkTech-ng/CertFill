@@ -17,7 +17,7 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
   return (
     <div className={cn("sm:h-screen overflow-hidden min-h-[700px] flex flex-col sm:flex-row", 'font-generalSans')}>
       <div className={cn(
-        "font-generalSans sm:h-full w-full sm:w-1/2 max-w-[735px",
+        "font-generalSans sm:h-full w-full sm:w-1/3 max-w-[735px]",
         "justify-between flex flex-col lg:min-w-[500px] bg-colors-certFillBlue p-10 sm:p-20 text-white",
         {
         "max-sm:flex-col-reverse": app.config?.layout !== "plain"

@@ -88,7 +88,7 @@ function ProgramDetailsPage() {
           )}
           <button
             type="button"
-            className="inputField border-dashed text-center my-5"
+            className="inputField border-dashed text-center my-5 hidden"
           >
             Add Learning Track / Course
           </button>

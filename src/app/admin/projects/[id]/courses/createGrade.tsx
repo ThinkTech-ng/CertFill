@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import customFetch from "@/service/https";
 import { Button } from "@/components/molecule/button";
+import { Switch } from "@/components/molecule/switch"
 
 interface GradeFormProps {
   courseId: string;
@@ -150,12 +151,12 @@ function GradeForm({ courseId }: GradeFormProps) {
         body: JSON.stringify(courseUpdate),
       });
 
-      const data = await response.json();
+      // const data = await response.json();
       console.log("Course saved successfully:", response.data);
       toast.success("Course saved successfully");
     } catch (error) {
       console.log(error)
-      toast.error(error.message || typeof error === 'strinh' ? error :"Error saving course");
+      toast.error(error.message || "Error saving course");
     }
   };
 
@@ -268,7 +269,7 @@ function GradeForm({ courseId }: GradeFormProps) {
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
-        <div className="inputField flex flex-row justify-between items-center my-3 h-[50px]">
+        <div className="inputField flex flex-row justify-between items-center mt-3 h-[50px]">
           <label>Certificate File (.pdf)</label>
           <input
             type="file"
@@ -286,8 +287,9 @@ function GradeForm({ courseId }: GradeFormProps) {
             Attach
           </button>
         </div>
+        <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
-        <div className="inputField flex flex-row justify-between items-center h-[50px]">
+        <div className="inputField flex flex-row justify-between items-center h-[50px] mt-4">
           <label>Recipient File (.csv)</label>
           <input
             type="file"
@@ -305,14 +307,31 @@ function GradeForm({ courseId }: GradeFormProps) {
             Upload
           </button>
         </div>
+        <span className="text-jumbo text-[13px]">Download the CSV template here to see the correct data format before uploading. 
+          <a href="/favicon.ico" download className="text-[#FF2B00] underline pl-1 cursor-pointer">Download</a>
+        </span>
+
+<div className="flex justify-between items-center py-3">
+  <span>Send to individual mails
+  </span>
+
+  <Switch />
+
+  </div>
 
         <Button
           className="mt-3 capitalize w-full h-[50px]"
           type="button"
           onClick={handleSaveCourse}
         >
-          save
+          Proceed to Payment
         </Button>
+
+      {/* { ' TODO': calculate the number of rows in the csv and show here with amount} */}
+        <span>
+          You've successfully uploaded 500 names. The total cost is 
+          <strong>₦500,000</strong>
+        </span>
 
         {popupVisible && certificateURL && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
