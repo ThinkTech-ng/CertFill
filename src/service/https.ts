@@ -83,9 +83,7 @@ export const fetchInterceptor = (() => {
 })();
 
 fetchInterceptor.setBaseUrl(env.API_BASE_URL as string);
-fetchInterceptor.setDefaultHeaders({
-  "Content-Type": "application/json",
-});
+
 
 fetchInterceptor.setRequestInterceptor(async (url, config) => {
   if (!config || !config.headers){
@@ -98,6 +96,9 @@ fetchInterceptor.setRequestInterceptor(async (url, config) => {
   }
   const user = safeJson(localStorage.getItem('user-login'), {})
   config.headers['authorization'] = 'Bearer '+user.accessToken
+  if (typeof config.body === 'string'){
+    config.headers["Content-Type"] =   "application/json"
+  }
   return [url, config];
 });
 

@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import customFetch from "@/service/https";
+import { Button } from "@/components/molecule/button";
 
 interface GradeFormProps {
   courseId: string;
@@ -24,10 +27,10 @@ function GradeForm({ courseId }: GradeFormProps) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [selectedFontSize, setSelectedFontSize] = useState<number>(16); // Default to 16px
 
-// Add a handler for font size changes
-const handleFontSizeChange = (size: number) => {
-  setSelectedFontSize(size);
-};
+  // Add a handler for font size changes
+  const handleFontSizeChange = (size: number) => {
+    setSelectedFontSize(size);
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -68,59 +71,35 @@ const handleFontSizeChange = (size: number) => {
     formData.append("recipients", file);
 
     try {
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/courses/${courseId}/upload-recipients`,
-        {
-          headers: {
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: formData,
-        }
-      );
+      const data = await customFetch(`/courses/${courseId}/upload-recipients`, {
+        method: "POST",
+        body: formData,
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to upload recipient file");
-      }
-
-      const data = await response.json();
-      console.log("Recipient file uploaded successfully:", data);
+      toast.success("Recipient file uploaded successfully:", data);
       return data.data;
     } catch (error) {
-      console.error("Error uploading recipient file:", error);
+      toast.error("Error uploading recipient file:", error);
       throw error;
     }
   };
 
-  console.log(box)
+  console.log(box);
 
   const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("certificate", file);
 
     try {
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/certificates/upload-certificate`,
-        {
-          headers: {
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: formData,
-        }
-      );
+      const data = await customFetch(`/certificates/upload-certificate`, {
+        method: "POST",
+        body: formData,
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to upload certificate file");
-      }
-
-      const data = await response.json();
-      console.log("Certificate file uploaded successfully:", data);
+      toast.success("Certificate file uploaded successfully");
       return data.data; // Assuming the API returns the URL in the 'url' field
     } catch (error) {
-      console.error("Error uploading certificate file:", error);
+      toast.error("Error uploading certificate file");
       throw error;
     }
   };
@@ -143,27 +122,14 @@ const handleFontSizeChange = (size: number) => {
         },
         certificateFile: certificateFileURL,
       };
-      const response = await fetch(
-        "https://certfillapi.reckonio.com/api/certificates",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: JSON.stringify(certificateDetails),
-        }
-      );
+      const { data } = await customFetch("/certificates", {
+        method: "POST",
+        body: JSON.stringify(certificateDetails),
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to save certificate details");
-      }
-
-      const data = await response.json();
       console.log("Certificate details saved successfully:", data);
       setCertificateId(data._id);
-      console.log("Certificate details saved successfully:", data);
+      toast.success("Certificate details saved successfully");
     } catch (error) {
       console.error("Error saving certificate details:", error);
     }
@@ -179,27 +145,16 @@ const handleFontSizeChange = (size: number) => {
         certificateId: certificateId,
         recipientsCsvFile: recipipentFileUrl,
       };
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/courses/${courseId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "PUT",
-          body: JSON.stringify(courseUpdate),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to save course");
-      }
+      const response = await customFetch(`/courses/${courseId}`, {
+        method: "PUT",
+        body: JSON.stringify(courseUpdate),
+      });
 
       const data = await response.json();
-      console.log("Course saved successfully:", data);
+      console.log("Course saved successfully:", response.data);
+      toast.success("Course saved successfully");
     } catch (error) {
-      console.error("Error saving course:", error);
+      toast.error("Error saving course");
     }
   };
 
@@ -217,7 +172,7 @@ const handleFontSizeChange = (size: number) => {
     const y = e.clientY - containerRect.top - boxHeight / 2;
 
     setBox({ x, y, text: "Enter Name", width: boxWidth, height: boxHeight });
-    console.log(x,y)
+    console.log(x, y);
   };
 
   const handleTextChange = (text: string) => {
@@ -312,7 +267,7 @@ const handleFontSizeChange = (size: number) => {
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
-        <div className="inputField flex flex-row justify-between items-center my-2">
+        <div className="inputField flex flex-row justify-between items-center my-3 h-[50px]">
           <label>Certificate File (.pdf)</label>
           <input
             type="file"
@@ -331,7 +286,7 @@ const handleFontSizeChange = (size: number) => {
           </button>
         </div>
 
-        <div className="inputField flex flex-row justify-between items-center">
+        <div className="inputField flex flex-row justify-between items-center h-[50px]">
           <label>Recipient File (.csv)</label>
           <input
             type="file"
@@ -350,13 +305,13 @@ const handleFontSizeChange = (size: number) => {
           </button>
         </div>
 
-        <button
-          className="mainButton mt-2 h-[68px] capitalize"
+        <Button
+          className="mt-3 capitalize w-full h-[50px]"
           type="button"
           onClick={handleSaveCourse}
         >
           save
-        </button>
+        </Button>
 
         {popupVisible && certificateURL && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -391,27 +346,26 @@ const handleFontSizeChange = (size: number) => {
                       </option>
                     ))}
                   </select>
-                </div>  <label
-    htmlFor="font-size-selector"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Select Font Size
-  </label>
-  <select
-    id="font-size-selector"
-    value={selectedFontSize}
-    onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-    className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-  >
-    {[14, 16, 18, 20, 24, 30].map((size) => (
-      <option key={size} value={size}>
-        {size}px
-      </option>
-    ))}
-  </select><div>
-
-                </div>
-
+                </div>{" "}
+                <label
+                  htmlFor="font-size-selector"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Select Font Size
+                </label>
+                <select
+                  id="font-size-selector"
+                  value={selectedFontSize}
+                  onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+                  className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                >
+                  {[14, 16, 18, 20, 24, 30].map((size) => (
+                    <option key={size} value={size}>
+                      {size}px
+                    </option>
+                  ))}
+                </select>
+                <div></div>
                 <button
                   type="button"
                   onClick={handleSave}
@@ -445,7 +399,7 @@ const handleFontSizeChange = (size: number) => {
                       top: `${box.y}px`,
                       left: `${box.x}px`,
                       width: `${box.width}px`,
-                       fontSize: `${selectedFontSize}px`, 
+                      fontSize: `${selectedFontSize}px`,
                     }}
                     onClick={handleFocus} // Set focus when clicking the box
                     onBlur={handleBlur} // Remove focus when clicking outside
@@ -471,6 +425,7 @@ const handleFontSizeChange = (size: number) => {
                         ></div>
                         <div
                           onMouseDown={(e) => handleDragStart(e, "bottom-left")}
+                          onClick={(e) => handleDragStart(e, "bottom-left")}
                           className="absolute hover:bg-purple-600 -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-black border rounded-full  cursor-resize"
                         ></div>
                         <div

@@ -9,9 +9,9 @@ export interface AppContextType {
   user: LoginUser | null;
   projects: any[] | null;
   setUser: (user: string | null) => void;
-  programs: any[];
+  config: Record<string, any>;
   setPrograms: (token: string | null) => void;
-  setProjects: (projects: string[]) => void;
+  setConfig: (config: Record<string, any>) => void;
 }
 
 export const AppContext = createContext<AppContextType>({
@@ -19,8 +19,8 @@ export const AppContext = createContext<AppContextType>({
   projects: [],
   setUser: (user: LoginUser) => {},
   setProjects: (projects: any[]) => {},
-  programs: [],
-  setPrograms: (projects: any[]) => {},
+  config: {},
+  setConfig: (config: Record<string, any>) => {},
 });
 interface AppProviderProps {
   children: React.ReactNode;
@@ -31,13 +31,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     "app-programs",
     []
   );
-  const [projects, setProjects] = useLocalStorage<any[] | null>(
-    "user-projects",
-    []
+  const [config, setConfig] = useLocalStorage<Record<string, any>>(
+    "app-config",
+    {}
   );
-  // const [user, setUser] = useState<LoginUser | null>(null);
   const [user, setUser]  = useLocalStorage<LoginUser | null>("user-login", null);
-  console.log({ user, projects });
 
   React.useEffect(()=>{
     (async()=>{
@@ -48,16 +46,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     })()
   }, [])
 
+  const handleConfig = (conf: Record<string, any>)=>{
+    setConfig({...config, ...conf})
+  }
+
 
   return (
     <AppContext.Provider
       value={{
         user,
-        projects,
+        config,
         setUser,
-        setProjects,
         programs,
-        setPrograms,
+        setConfig: handleConfig,
       }}
     >
       {children}

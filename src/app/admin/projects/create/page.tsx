@@ -82,7 +82,7 @@ export default function CreateProject() {
       };
       const response = await createProgram(payload);
       toast.success(`Your program "${data.name}" was created successfully `)
-      return router.push(`/admin/project/${response.data._id}`)
+      return router.push(`/admin/projects/${response.data._id}/courses`)
     } catch (e) {
       toast.success((e as Error).message || `Could not complete program `)
     }
@@ -142,7 +142,7 @@ export default function CreateProject() {
                 return (
                   <>
                     {array.fields.map((field, index) => (
-                      <div className="flex items-center gap-2  my-2.5">
+                      <div className="flex items-center gap-2  my-2.5 relative">
                         <Input
                           key={field.id}
                           className="h-[46px]"
@@ -160,7 +160,7 @@ export default function CreateProject() {
                         {array.fields.length > 1 && (
                           <Button
                             variant={"outline"}
-                            className="font-medium p-6 w-[20px] border-red-500"
+                            className="absolute right-0 top-0 font-medium p-6 w-[20px] border-none hover:bg-transparent"
                             onClick={() => array.remove(index)}
                           >
                             <Trash2 className="text-red-500" />

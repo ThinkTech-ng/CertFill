@@ -8,6 +8,7 @@ import logo from "@/public/certLogo.svg";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import GradeForm from "./createGrade";
 import Link from "next/link";
+import { getSinglePrograms } from "@/service/programs";
 
 interface ProgramDetails {
   name: string;
@@ -30,23 +31,7 @@ function ProgramDetailsPage() {
   useEffect(() => {
     const fetchProgramDetails = async () => {
       try {
-        const response = await fetch(
-          `https://certfillapi.reckonio.com/api/programs/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Api-Key":
-                "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch program details");
-        }
-
-        const data = await response.json();
-        console.log(data);
+        const data = await getSinglePrograms(id)
         setProgram({
           name: data.name,
           description: data.description,
@@ -70,24 +55,14 @@ function ProgramDetailsPage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden min-h-[700px] flex flex-row font-generalSans">
-      <div className="font-generalSans h-full w-1/2 max-w-[735px] justify-between flex flex-col lg:min-w-[500px] bg-colors-certFillBlue p-20 text-white">
-      <Link href='/admin'>
-          <Image src={logo} alt="certificate" />
-        </Link>
-        <div className="text-5xl pt-6 font-semibold flex flex-col">
-          <span>Seamless Certs,</span>
-          <span>Delivered Fast</span>
-        </div>
-      </div>
-      <div className="h-full grow bg-white p-20 text-black flex flex-col justify-between">
+   <div className="h-full grow bg-white text-black flex flex-col justify-between">
         <h1 className="text-2xl font-bold mb-4">{program?.name}</h1>
         <div className="mx-auto max-w-[700px] w-full">
           {" "}
           {program && (
-            <div className="space-y-5 py-8">
+            <div className="w-full py-8">
               {program?.courses.map((course) => (
-                <div className="flex flex-col gap-3" key={course._id}>
+                <div className="flex flex-col gap-4" key={course._id}>
                   <div
                     className="text-2xl flex-row justify-between flex"
                     onClick={() => toggleCourse(course._id)}
@@ -103,7 +78,7 @@ function ProgramDetailsPage() {
                   </div>
 
                   {activeIndex === course._id && (
-                    <div className="mt-2 text-gray-600 leading-6 font-satoshi text-lg lg:max-w-[650px] slg:max-w-[590px]">
+                    <div className="mt-2 text-gray-600 leading-6 w-full font-satoshi text-lg lg:max-w-[650px] slg:max-w-[590px]">
                       <GradeForm courseId={course._id} />
                     </div>
                   )}
@@ -122,7 +97,6 @@ function ProgramDetailsPage() {
           </button> */}
         </div>
       </div>
-    </div>
   );
 }
 

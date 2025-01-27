@@ -2,7 +2,11 @@ import customFetch from "./https"
 
 export const getMyPrograms = async ()=>{
     const {data} = await customFetch('/programs')
-    console.log('programs', data)
+    return data
+}
+export const getSinglePrograms = async (id: string)=>{
+    const {data} = await customFetch(`/programs/${id}`)
+    return data
 }
 export const createProgram = async (formData: Record<string, string>) => {
       const response = await customFetch("/programs", {
