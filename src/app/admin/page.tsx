@@ -10,18 +10,8 @@ import React from "react";
 import { LoginUser } from "@/interface/user.dto";
 import { InfoCard, ListCard } from "@/components/molecule/info-card";
 import { Button } from "@/components/molecule/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/molecule/dropdown-menu"
-import { CircleEllipsis } from 'lucide-react';
-
 export default function Admin() {
-  const {user} = React.use(AppContext).user as LoginUser
+  const {user, programs} = (React.use(AppContext))
   
   const actions = [{ text: "Edit"}, { text: "Delete", className: "text-red-600"}]
   const onAction = async (data)=>{
@@ -30,7 +20,7 @@ export default function Admin() {
   }
   return (
     <div className="min-h-screen h-full p-5">
-      <span className="text-2xl sm:text-3xl">Welcome {user?.name?.split(' ')[0]}!</span>
+      <span className="text-2xl sm:text-3xl">Welcome {user?.user?.name?.split(' ')[0]}!</span>
       
       <div className="grid grid-cols-2 gap-2 pt-14 sm:pt-28 pb-14">
         <InfoCard
@@ -48,13 +38,17 @@ export default function Admin() {
       Create New Certificate
       </Button>
 
-      <div className="flex items-center gap-5 pt-10 pb-5">
+      {programs?.length <= 0 && <div className="w-full flex items-center gap-5 pt-10 pb-5 font-medium texr-center">
+        You have not created any program yet
+        </div>}
+
+      {programs?.length > 0 && <div className="flex items-center gap-5 pt-10 pb-5">
         <span className="font-medium">PAST PROGRAMS</span>
         <hr className="flex-1 border-jumbo"/>
-        </div>
+        </div>}
 
         <div>
-          {[1,2,3,4,5].map(()=>{
+          {programs?.map?.(()=>{
             return <ListCard title="Women Techsters Fellowship 2024 Women Techsters Fellowship 2024" actions={actions} onAction={onAction} />
           })}
         </div>

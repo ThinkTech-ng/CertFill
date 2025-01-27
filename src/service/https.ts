@@ -1,4 +1,5 @@
 import { env } from "@/../env";
+import { safeJson } from "@/utils/utils";
 
 type FetchInterceptor = {
   request: (url: string, config: RequestInit) => Promise<[string, RequestInit]>;
@@ -87,8 +88,16 @@ fetchInterceptor.setDefaultHeaders({
 });
 
 fetchInterceptor.setRequestInterceptor(async (url, config) => {
-
-
+  if (!config || !config.headers){
+    config = {
+      ...(config || {}),
+      headers: {
+        ...(config?.headers || {}),
+      }
+    }
+  }
+  const user = safeJson(localStorage.getItem('user-login'), {})
+  config.headers['authorization'] = 'Bearer '+user.accessToken
   return [url, config];
 });
 
