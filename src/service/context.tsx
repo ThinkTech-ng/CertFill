@@ -1,0 +1,61 @@
+"use client"
+import { LoginUser } from "@/interface/user.dto";
+import { safeJson } from "@/utils/utils";
+import React, { createContext, useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
+import { getMyPrograms } from "./programs";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+const queryClient = new QueryClient()
+
+export interface AppContextType {
+  user: LoginUser | null;
+  setUser: (user: LoginUser) => void;
+  config: Record<string, any>;
+  setConfig: (config: Record<string, any>) => void;
+}
+
+export const AppContext = createContext<AppContextType>({
+  user: null,
+  setUser: (user: LoginUser) => {},
+  config: {},
+  setConfig: (config: Record<string, any>) => {},
+});
+interface AppProviderProps {
+  children: React.ReactNode;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+  
+  const [config, setConfig] = useLocalStorage<Record<string, any>>(
+    "app-config",
+    {}
+  );
+  const [user, setUser]  = useLocalStorage<LoginUser | null>("user-login", null);
+
+
+  const handleConfig = (conf: Record<string, any>)=>{
+    setConfig({...config, ...conf})
+  }
+
+
+  return (
+    <QueryClientProvider client={queryClient}>
+    <AppContext.Provider
+      value={{
+        user,
+        config,
+        setUser,
+        setConfig: handleConfig,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+    </QueryClientProvider>
+  );
+};

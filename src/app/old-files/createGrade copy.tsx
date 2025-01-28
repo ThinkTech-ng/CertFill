@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import customFetch from "@/service/https";
+import { Button } from "@/components/molecule/button";
+import { Switch } from "@/components/molecule/switch";
+import { FileUpload } from "@/components/molecule/file-upload";
+import {
+  certificateFontFamily,
+  certificateFontSize,
+} from "@/store/certificate";
 
 interface GradeFormProps {
   courseId: string;
@@ -24,103 +33,63 @@ function GradeForm({ courseId }: GradeFormProps) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [selectedFontSize, setSelectedFontSize] = useState<number>(16); // Default to 16px
 
-// Add a handler for font size changes
-const handleFontSizeChange = (size: number) => {
-  setSelectedFontSize(size);
-};
+  // Add a handler for font size changes
+  const handleFontSizeChange = (size: number) => {
+    setSelectedFontSize(size);
+  };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (event.target.name === "certificate") {
-        console.log("cert");
-        setCertificate(file);
-        const fileURL = URL.createObjectURL(file);
-        console.log(fileURL);
-        setCertificateURL(fileURL);
-        setPopupVisible(true); // Show the popup
-      } else if (event.target.name === "recipients") {
-        setRecipientsFile(file);
+  const handleFileChange =
+    (name: "certificate" | "recipients") => (files: FileList | null) => {
+      const file = files?.[0];
+      if (file) {
+        if (name === "certificate") {
+          console.log("cert");
+          setCertificate(file);
+          const fileURL = URL.createObjectURL(file);
+          console.log(fileURL);
+          setCertificateURL(fileURL);
+          setPopupVisible(true); // Show the popup
+        } else if (name === "recipients") {
+          setRecipientsFile(file);
+        }
       }
-    }
-  };
+    };
 
-  const handleCertificateUpload = () => {
-    const input = document.querySelector(
-      'input[name="certificate"]'
-    ) as HTMLInputElement;
-    if (input) {
-      input.click(); // Trigger the file input programmatically
-    }
-  };
-
-  const handleReciepientUpload = () => {
-    const input = document.querySelector(
-      'input[name="recipients"]'
-    ) as HTMLInputElement;
-    if (input) {
-      input.click(); // Trigger the file input programmatically
-    }
-  };
   //upload to server
   const uploadRecipientFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("recipients", file);
 
     try {
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/courses/${courseId}/upload-recipients`,
-        {
-          headers: {
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: formData,
-        }
-      );
+      const data = await customFetch(`/courses/${courseId}/upload-recipients`, {
+        method: "POST",
+        body: formData,
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to upload recipient file");
-      }
-
-      const data = await response.json();
-      console.log("Recipient file uploaded successfully:", data);
+      toast.success("Recipient file uploaded successfully:", data);
       return data.data;
     } catch (error) {
-      console.error("Error uploading recipient file:", error);
+      toast.error("Error uploading recipient file:", error);
       throw error;
     }
   };
 
-  console.log(box)
+  console.log(box);
 
   const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("certificate", file);
 
     try {
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/certificates/upload-certificate`,
-        {
-          headers: {
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: formData,
-        }
-      );
+      const data = await customFetch(`/certificates/upload-certificate`, {
+        method: "POST",
+        body: formData,
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to upload certificate file");
-      }
-
-      const data = await response.json();
-      console.log("Certificate file uploaded successfully:", data);
+      toast.success("Certificate file uploaded successfully");
       return data.data; // Assuming the API returns the URL in the 'url' field
     } catch (error) {
-      console.error("Error uploading certificate file:", error);
+      toast.error("Error uploading certificate file");
       throw error;
     }
   };
@@ -143,27 +112,14 @@ const handleFontSizeChange = (size: number) => {
         },
         certificateFile: certificateFileURL,
       };
-      const response = await fetch(
-        "https://certfillapi.reckonio.com/api/certificates",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "POST",
-          body: JSON.stringify(certificateDetails),
-        }
-      );
+      const { data } = await customFetch("/certificates", {
+        method: "POST",
+        body: JSON.stringify(certificateDetails),
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to save certificate details");
-      }
-
-      const data = await response.json();
       console.log("Certificate details saved successfully:", data);
       setCertificateId(data._id);
-      console.log("Certificate details saved successfully:", data);
+      toast.success("Certificate details saved successfully");
     } catch (error) {
       console.error("Error saving certificate details:", error);
     }
@@ -179,27 +135,17 @@ const handleFontSizeChange = (size: number) => {
         certificateId: certificateId,
         recipientsCsvFile: recipipentFileUrl,
       };
-      const response = await fetch(
-        `https://certfillapi.reckonio.com/api/courses/${courseId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key":
-              "f171668084a1848bca2875372bf209c96232880dbbc6fa9541435ede3b6e1590",
-          },
-          method: "PUT",
-          body: JSON.stringify(courseUpdate),
-        }
-      );
+      const response = await customFetch(`/courses/${courseId}`, {
+        method: "PUT",
+        body: JSON.stringify(courseUpdate),
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to save course");
-      }
-
-      const data = await response.json();
-      console.log("Course saved successfully:", data);
+      // const data = await response.json();
+      console.log("Course saved successfully:", response.data);
+      toast.success("Course saved successfully");
     } catch (error) {
-      console.error("Error saving course:", error);
+      console.log(error);
+      toast.error(error.message || "Error saving course");
     }
   };
 
@@ -217,7 +163,7 @@ const handleFontSizeChange = (size: number) => {
     const y = e.clientY - containerRect.top - boxHeight / 2;
 
     setBox({ x, y, text: "Enter Name", width: boxWidth, height: boxHeight });
-    console.log(x,y)
+    console.log(x, y);
   };
 
   const handleTextChange = (text: string) => {
@@ -312,106 +258,77 @@ const handleFontSizeChange = (size: number) => {
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
-        <div className="inputField flex flex-row justify-between items-center my-2">
-          <label>Certificate File (.pdf)</label>
-          <input
-            type="file"
-            name="certificate"
-            onChange={handleFileChange}
-            className="hidden"
-            accept=".pdf"
-            required
-          />
-          <button
-            type="button"
-            onClick={handleCertificateUpload}
-            className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
-          >
-            Attach
-          </button>
-        </div>
+        <FileUpload
+          label="Certificate File (.pdf)"
+          uploadText=" Attach"
+          accept=".pdf"
+          onFileChange={handleFileChange("certificate")}
+        />
+        <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
-        <div className="inputField flex flex-row justify-between items-center">
-          <label>Recipient File (.csv)</label>
-          <input
-            type="file"
-            name="recipients"
-            onChange={handleFileChange}
-            className="hidden"
-            accept=".csv"
-            required
-          />
-          <button
-            type="button"
-            onClick={handleReciepientUpload}
-            className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
-          >
-            Upload
-          </button>
-        </div>
+        <FileUpload
+          label="Recipient File (.csv)"
+          uploadText="Upload"
+          accept=".csv"
+          onFileChange={handleFileChange("recipients")}
+        />
 
-        <button
-          className="mainButton mt-2 h-[68px] capitalize"
+        <span className="text-jumbo text-[13px]">
+          Download the CSV template here to see the correct data format before
+          uploading.
+          <a
+            href="/favicon.ico"
+            download
+            className="text-[#FF2B00] underline pl-1 cursor-pointer"
+          >
+            Download
+          </a>
+        </span>
+
+        <Button
+          className="mt-3 w-fit capitalize py-5"
           type="button"
+          variant={"outline"}
           onClick={handleSaveCourse}
         >
-          save
-        </button>
+          Save Changes
+        </Button>
 
         {popupVisible && certificateURL && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="w-[1240px] max-w-[90%] h-[700px] max-h-[90%] bg-white flex flex-row justify-center gap-10 px-6 items-center ">
               <div className="flex flex-col gap-3">
-                <div className="w-[388px]">
-                  <label
-                    htmlFor="font-selector"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Select Font
-                  </label>
+                <div className="min-w-[315px] w-full flex gap-5">
                   <select
                     id="font-selector"
                     value={selectedFont}
                     onChange={(e) => handleFontChange(e.target.value)}
-                    className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="inputField block w-full flex-1"
                   >
                     <option value="" disabled>
                       Choose a font
                     </option>
-                    {[
-                      { class: "font-inter", name: "Inter" },
-                      { class: "font-roboto", name: "Roboto" },
-                      { class: "font-lora", name: "Lora" },
-                      { class: "font-poppins", name: "Poppins" },
-                      { class: "font-montserrat", name: "Montserrat" },
-                      { class: "font-dancing-script", name: "Dancing Script" },
-                    ].map(({ class: fontClass, name }) => (
+                    {certificateFontFamily.map(({ class: fontClass, name }) => (
                       <option key={fontClass} value={fontClass}>
                         {name}
                       </option>
                     ))}
                   </select>
-                </div>  <label
-    htmlFor="font-size-selector"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Select Font Size
-  </label>
-  <select
-    id="font-size-selector"
-    value={selectedFontSize}
-    onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-    className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-  >
-    {[14, 16, 18, 20, 24, 30].map((size) => (
-      <option key={size} value={size}>
-        {size}px
-      </option>
-    ))}
-  </select><div>
+                <select
+                  id="font-size-selector"
+                  value={selectedFontSize}
+                  onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+                  className="inputField max-w-[75px] w-[50px]"
+                >
+                  {certificateFontSize.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+                </div>{" "}
 
-                </div>
-
+                <div></div>
                 <button
                   type="button"
                   onClick={handleSave}
@@ -445,7 +362,7 @@ const handleFontSizeChange = (size: number) => {
                       top: `${box.y}px`,
                       left: `${box.x}px`,
                       width: `${box.width}px`,
-                       fontSize: `${selectedFontSize}px`, 
+                      fontSize: `${selectedFontSize}px`,
                     }}
                     onClick={handleFocus} // Set focus when clicking the box
                     onBlur={handleBlur} // Remove focus when clicking outside
@@ -471,6 +388,7 @@ const handleFontSizeChange = (size: number) => {
                         ></div>
                         <div
                           onMouseDown={(e) => handleDragStart(e, "bottom-left")}
+                          onClick={(e) => handleDragStart(e, "bottom-left")}
                           className="absolute hover:bg-purple-600 -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-black border rounded-full  cursor-resize"
                         ></div>
                         <div

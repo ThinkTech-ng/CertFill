@@ -8,7 +8,9 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-
+import { Toaster } from "@/components/molecule/sonner";
+import AppLayout from "@/components/template/layout";
+import {AppProvider} from "@/service/context"
 const generalSans = localFont({
   src: [
     {
@@ -95,7 +97,12 @@ export default function RootLayout({
       <body
         className={`${generalSans.variable} ${interFont.variable} ${dancingFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable}`}
       >
-        {children}
+        <AppProvider>
+        <AppLayout>
+          {children}
+          <Toaster richColors position="top-right" />
+        </AppLayout>
+        </AppProvider>
       </body>
     </html>
   );
