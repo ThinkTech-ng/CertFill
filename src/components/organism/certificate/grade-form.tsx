@@ -33,6 +33,12 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const handleFontSizeChange = (size: number) => {
     setSelectedFontSize(size);
   };
+  const reset = ()=>{
+    setCertificate(null)
+setCertificateURL(null);
+          setPopupVisible(false)
+setRecipientsFile(null)
+  }
 
   const handleFileChange =
     (name: "certificate" | "recipients") => (files: FileList | null) => {
@@ -134,6 +140,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
       console.log("Course saved successfully:", response.data);
       toast.success("Course saved successfully");
       onSave(response.data)
+      reset()
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error saving course");
