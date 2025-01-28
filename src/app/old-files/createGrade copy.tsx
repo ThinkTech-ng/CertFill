@@ -3,7 +3,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import customFetch from "@/service/https";
 import { Button } from "@/components/molecule/button";
-import { Switch } from "@/components/molecule/switch"
+import { Switch } from "@/components/molecule/switch";
+import { FileUpload } from "@/components/molecule/file-upload";
+import {
+  certificateFontFamily,
+  certificateFontSize,
+} from "@/store/certificate";
 
 interface GradeFormProps {
   courseId: string;
@@ -33,39 +38,23 @@ function GradeForm({ courseId }: GradeFormProps) {
     setSelectedFontSize(size);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (event.target.name === "certificate") {
-        console.log("cert");
-        setCertificate(file);
-        const fileURL = URL.createObjectURL(file);
-        console.log(fileURL);
-        setCertificateURL(fileURL);
-        setPopupVisible(true); // Show the popup
-      } else if (event.target.name === "recipients") {
-        setRecipientsFile(file);
+  const handleFileChange =
+    (name: "certificate" | "recipients") => (files: FileList | null) => {
+      const file = files?.[0];
+      if (file) {
+        if (name === "certificate") {
+          console.log("cert");
+          setCertificate(file);
+          const fileURL = URL.createObjectURL(file);
+          console.log(fileURL);
+          setCertificateURL(fileURL);
+          setPopupVisible(true); // Show the popup
+        } else if (name === "recipients") {
+          setRecipientsFile(file);
+        }
       }
-    }
-  };
+    };
 
-  const handleCertificateUpload = () => {
-    const input = document.querySelector(
-      'input[name="certificate"]'
-    ) as HTMLInputElement;
-    if (input) {
-      input.click(); // Trigger the file input programmatically
-    }
-  };
-
-  const handleReciepientUpload = () => {
-    const input = document.querySelector(
-      'input[name="recipients"]'
-    ) as HTMLInputElement;
-    if (input) {
-      input.click(); // Trigger the file input programmatically
-    }
-  };
   //upload to server
   const uploadRecipientFile = async (file: File): Promise<string> => {
     const formData = new FormData();
@@ -155,7 +144,7 @@ function GradeForm({ courseId }: GradeFormProps) {
       console.log("Course saved successfully:", response.data);
       toast.success("Course saved successfully");
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error(error.message || "Error saving course");
     }
   };
@@ -269,122 +258,76 @@ function GradeForm({ courseId }: GradeFormProps) {
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
-        <div className="inputField flex flex-row justify-between items-center mt-3 h-[50px]">
-          <label>Certificate File (.pdf)</label>
-          <input
-            type="file"
-            name="certificate"
-            onChange={handleFileChange}
-            className="hidden"
-            accept=".pdf"
-            required
-          />
-          <button
-            type="button"
-            onClick={handleCertificateUpload}
-            className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
-          >
-            Attach
-          </button>
-        </div>
+        <FileUpload
+          label="Certificate File (.pdf)"
+          uploadText=" Attach"
+          accept=".pdf"
+          onFileChange={handleFileChange("certificate")}
+        />
         <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
-        <div className="inputField flex flex-row justify-between items-center h-[50px] mt-4">
-          <label>Recipient File (.csv)</label>
-          <input
-            type="file"
-            name="recipients"
-            onChange={handleFileChange}
-            className="hidden"
-            accept=".csv"
-            required
-          />
-          <button
-            type="button"
-            onClick={handleReciepientUpload}
-            className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
+        <FileUpload
+          label="Recipient File (.csv)"
+          uploadText="Upload"
+          accept=".csv"
+          onFileChange={handleFileChange("recipients")}
+        />
+
+        <span className="text-jumbo text-[13px]">
+          Download the CSV template here to see the correct data format before
+          uploading.
+          <a
+            href="/favicon.ico"
+            download
+            className="text-[#FF2B00] underline pl-1 cursor-pointer"
           >
-            Upload
-          </button>
-        </div>
-        <span className="text-jumbo text-[13px]">Download the CSV template here to see the correct data format before uploading. 
-          <a href="/favicon.ico" download className="text-[#FF2B00] underline pl-1 cursor-pointer">Download</a>
+            Download
+          </a>
         </span>
-
-<div className="flex justify-between items-center py-3">
-  <span>Send to individual mails
-  </span>
-
-  <Switch />
-
-  </div>
 
         <Button
-          className="mt-3 capitalize w-full h-[50px]"
+          className="mt-3 w-fit capitalize py-5"
           type="button"
+          variant={"outline"}
           onClick={handleSaveCourse}
         >
-          Proceed to Payment
+          Save Changes
         </Button>
-
-      {/* { ' TODO': calculate the number of rows in the csv and show here with amount} */}
-        <span>
-          You've successfully uploaded 500 names. The total cost is 
-          <strong>₦500,000</strong>
-        </span>
 
         {popupVisible && certificateURL && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="w-[1240px] max-w-[90%] h-[700px] max-h-[90%] bg-white flex flex-row justify-center gap-10 px-6 items-center ">
               <div className="flex flex-col gap-3">
-                <div className="w-[388px]">
-                  <label
-                    htmlFor="font-selector"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Select Font
-                  </label>
+                <div className="min-w-[315px] w-full flex gap-5">
                   <select
                     id="font-selector"
                     value={selectedFont}
                     onChange={(e) => handleFontChange(e.target.value)}
-                    className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="inputField block w-full flex-1"
                   >
                     <option value="" disabled>
                       Choose a font
                     </option>
-                    {[
-                      { class: "font-inter", name: "Inter" },
-                      { class: "font-roboto", name: "Roboto" },
-                      { class: "font-lora", name: "Lora" },
-                      { class: "font-poppins", name: "Poppins" },
-                      { class: "font-montserrat", name: "Montserrat" },
-                      { class: "font-dancing-script", name: "Dancing Script" },
-                    ].map(({ class: fontClass, name }) => (
+                    {certificateFontFamily.map(({ class: fontClass, name }) => (
                       <option key={fontClass} value={fontClass}>
                         {name}
                       </option>
                     ))}
                   </select>
-                </div>{" "}
-                <label
-                  htmlFor="font-size-selector"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Select Font Size
-                </label>
                 <select
                   id="font-size-selector"
                   value={selectedFontSize}
                   onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-                  className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="inputField max-w-[75px] w-[50px]"
                 >
-                  {[14, 16, 18, 20, 24, 30].map((size) => (
+                  {certificateFontSize.map((size) => (
                     <option key={size} value={size}>
-                      {size}px
+                      {size}
                     </option>
                   ))}
                 </select>
+                </div>{" "}
+
                 <div></div>
                 <button
                   type="button"

@@ -2,7 +2,9 @@ import * as z from "zod";
 
 export type FormField = {
   type:
+    | "hidden"
     | "text"
+    | "textarea"
     | "email"
     | "password"
     | "number"

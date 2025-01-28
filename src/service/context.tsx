@@ -4,21 +4,25 @@ import { safeJson } from "@/utils/utils";
 import React, { createContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { getMyPrograms } from "./programs";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+const queryClient = new QueryClient()
 
 export interface AppContextType {
   user: LoginUser | null;
-  projects: any[] | null;
-  setUser: (user: string | null) => void;
+  setUser: (user: LoginUser) => void;
   config: Record<string, any>;
-  setPrograms: (token: string | null) => void;
   setConfig: (config: Record<string, any>) => void;
 }
 
 export const AppContext = createContext<AppContextType>({
   user: null,
-  projects: [],
   setUser: (user: LoginUser) => {},
-  setProjects: (projects: any[]) => {},
   config: {},
   setConfig: (config: Record<string, any>) => {},
 });
@@ -27,24 +31,13 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [programs, setPrograms] = useLocalStorage<any[] | null>(
-    "app-programs",
-    []
-  );
+  
   const [config, setConfig] = useLocalStorage<Record<string, any>>(
     "app-config",
     {}
   );
   const [user, setUser]  = useLocalStorage<LoginUser | null>("user-login", null);
 
-  React.useEffect(()=>{
-    (async()=>{
-      console.log('jgj----pop')
-      const data = await getMyPrograms()
-      console.log('await----pop')
-
-    })()
-  }, [])
 
   const handleConfig = (conf: Record<string, any>)=>{
     setConfig({...config, ...conf})
@@ -52,16 +45,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
 
   return (
+    <QueryClientProvider client={queryClient}>
     <AppContext.Provider
       value={{
         user,
         config,
         setUser,
-        programs,
         setConfig: handleConfig,
       }}
     >
       {children}
     </AppContext.Provider>
+    </QueryClientProvider>
   );
 };

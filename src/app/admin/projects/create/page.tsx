@@ -38,7 +38,7 @@ export default function CreateProject() {
     },
     {
       type: "hidden",
-      name: "plan",
+      name: "paymentPlan",
       label: undefined,
       placeholder: "Course / Cohort/Grade",
       validation: z.string().min(4, "Select a plan"),
@@ -70,7 +70,7 @@ export default function CreateProject() {
     },
   ];
 
-  const onSubmit = (_) => async (data: { description: string; name: string }) => {
+  const onSubmit = (_: any) => async (data: { description: string; name: string }) => {
     try {
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
@@ -93,10 +93,10 @@ export default function CreateProject() {
       <h2 className="text-2xl sm:text-3xl">Add programs or courses</h2>
 
       <DynamicForm
-        onSubmit={onSubmit}
+        onSubmit={onSubmit as any}
         formSettings={formSettings}
         hideError
-        defaultValues={{ plan: "issuer", courses: [{ name: "" }] }}
+        defaultValues={{ paymentPlan: "issuer", courses: [{ name: "" }] }}
       >
         {(form) => (
           <div className="pb-28">
@@ -115,7 +115,7 @@ export default function CreateProject() {
                         key={plan.label}
                         className="py-3 cursor-pointer flex"
                         onClick={() => {
-                          form.setValue("plan", plan.value, {
+                          form.setValue("paymentPlan", plan.value, {
                             shouldValidate: true,
                           });
                         }}
@@ -128,7 +128,7 @@ export default function CreateProject() {
                             {plan.description}
                           </span>
                         </div>
-                        {form?.getValues("plan") === plan.value && (
+                        {form?.getValues("paymentPlan") === plan.value && (
                           <Check className="text-primary" />
                         )}
                       </div>
