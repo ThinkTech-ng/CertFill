@@ -15,8 +15,9 @@ export type FormField = {
   name: string;
   label?: string;
   placeholder?: string;
-  options?: { value: string; label: string }[]; // For select, radio, and checkbox
-  validation?: z.ZodTypeAny; // Custom validation schema
+  options?: { value: string; label: string }[]; 
+  validation?: z.ZodTypeAny; 
+  [key:string]: any
 };
 
 export type AuthFormType = "login" | "register";

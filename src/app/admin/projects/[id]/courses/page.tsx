@@ -168,6 +168,7 @@ function ProgramDetailsPage() {
         </div>
         <Button
           disabled={
+            totalRecipients < 3 ||
             mutation.isPending ||
             finalize.isPending ||
             (mutation.isSuccess && finalize.isSuccess)

@@ -16,9 +16,13 @@ import { getMyPrograms } from "@/service/programs";
 import { LoaderCircleIcon } from "lucide-react";
 import { formatToSocialMediaNumber } from "@/utils/utils";
 import { LoadingAtom } from "@/components/atom/loading";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Admin() {
   const { user } = React.use(AppContext);
+  const router = useRouter();
+
   const { data: { programs, stats } = {}, isLoading } = useQuery({
     queryKey: ["programs"],
     queryFn: getMyPrograms,
@@ -29,8 +33,16 @@ export default function Admin() {
     { text: "Delete", className: "text-red-600" },
   ];
   const onAction = (program: Record<string, any>) => async (data: Record<string, any>) => {
-    console.log({ data, program });
+    if (data.action.text === 'Edit'){
+      toast.info(`Opening program, please wait.`)
+        router.push(`/admin/projects/${program._id}/courses`)
+        return
+    }
   };
+  React.useEffect(()=>{
+    router.prefetch('/admin/projects/create')
+    router.prefetch('/admin/projects/any/courses')
+  }, [])
   return (
     <div className="min-h-screen h-full p-5">
       <span className="text-2xl sm:text-3xl">
