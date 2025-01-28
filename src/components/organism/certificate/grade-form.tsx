@@ -5,7 +5,7 @@ import customFetch from "@/service/https";
 import { Button } from "@/components/molecule/button";
 import { FileUpload } from "@/components/molecule/file-upload";
 import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
-
+import { env } from '../../../../env';
 interface GradeFormProps {
   courseId: string;
   onSave: (course: any)=> void
@@ -256,7 +256,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
           Download the CSV template here to see the correct data format before
           uploading.
           <a
-            href="/RecipientSample.csv"
+            href={env.RECIPIENT_SAMPLE_CSV}
             download
             className="text-[#FF2B00] underline pl-1 cursor-pointer"
           >
