@@ -18,8 +18,6 @@ export default function ViewOrDownloadCert(){
     return <CertificateNotFound />
   }
 
-  console.log(programs, 'programs');
-  
     return <PaidCertificate program={programs.data} />
 
 }

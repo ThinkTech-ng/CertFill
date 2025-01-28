@@ -91,6 +91,7 @@ export const PaidCertificate: React.FC<PaidCertificateProps> = (props) => {
   return (
     <>
       <CertificateContent
+        filename={`${props?.program?.course?.name} ${props?.program?.programs.name} certificate`}
         isFree={isFreePaid}
         onDownload={onDownload}
         downloadBtnText={text}
@@ -186,7 +187,7 @@ function CertificateContent({
       const pdfBytes = await pdfDoc.save();
 
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      saveAs(blob, "certificate.pdf");
+      saveAs(blob, (props.filename || 'Certificate') + ".pdf");
     } catch (error) {
       console.error("Error generating PDF:", error);
     }
