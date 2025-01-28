@@ -5,7 +5,7 @@ import customFetch from "@/service/https";
 import { Button } from "@/components/molecule/button";
 import { FileUpload } from "@/components/molecule/file-upload";
 import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
-
+import { env } from '../../../../env';
 interface GradeFormProps {
   courseId: string;
   onSave: (course: any)=> void
@@ -33,6 +33,12 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const handleFontSizeChange = (size: number) => {
     setSelectedFontSize(size);
   };
+  const reset = ()=>{
+    setCertificate(null)
+setCertificateURL(null);
+          setPopupVisible(false)
+setRecipientsFile(null)
+  }
 
   const handleFileChange =
     (name: "certificate" | "recipients") => (files: FileList | null) => {
@@ -134,6 +140,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
       console.log("Course saved successfully:", response.data);
       toast.success("Course saved successfully");
       onSave(response.data)
+      reset()
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error saving course");
@@ -256,7 +263,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
           Download the CSV template here to see the correct data format before
           uploading.
           <a
-            href="/RecipientSample.csv"
+            href={env.RECIPIENT_SAMPLE_CSV}
             download
             className="text-[#FF2B00] underline pl-1 cursor-pointer"
           >
