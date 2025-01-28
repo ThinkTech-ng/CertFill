@@ -15,7 +15,7 @@ import { AuthError } from "@/interface/error.dto";
 import { validateDynamicFormError } from "@/utils/validationError";
 import { UseFormReturn } from "react-hook-form";
 import { LoginUser, User } from "@/interface/user.dto";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as rout from "next/navigation";
 import React from "react";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";

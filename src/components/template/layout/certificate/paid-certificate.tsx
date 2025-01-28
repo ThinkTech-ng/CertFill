@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
