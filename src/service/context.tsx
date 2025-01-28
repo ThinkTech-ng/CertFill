@@ -15,16 +15,18 @@ const queryClient = new QueryClient()
 
 export interface AppContextType {
   user: LoginUser | null;
-  setUser: (user: LoginUser) => void;
+  setUser: (user: Partial<LoginUser>) => void;
   config: Record<string, any>;
   setConfig: (config: Record<string, any>) => void;
+  removeUser: ()=> void
 }
 
 export const AppContext = createContext<AppContextType>({
   user: null,
-  setUser: (user: LoginUser) => {},
+  setUser: (user: Partial<LoginUser>) => {},
   config: {},
   setConfig: (config: Record<string, any>) => {},
+  removeUser:()=>{}
 });
 interface AppProviderProps {
   children: React.ReactNode;
@@ -36,12 +38,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     "app-config",
     {}
   );
-  const [user, setUser]  = useLocalStorage<LoginUser | null>("user-login", null);
+  const [user, setUserObject]  = useLocalStorage<LoginUser | null>("user-login", null);
 
 
   const handleConfig = (conf: Record<string, any>)=>{
     setConfig({...config, ...conf})
   }
+  const setUser = (user: Partial<LoginUser> & Partial<LoginUser['user']>)=>{
+    setUserObject((prev)=>({...(prev||{}), ...user, user: {...(prev?.user || {}), ...user, }} as LoginUser))
+  }
+  const removeUser = ()=> setUserObject({})
 
 
   return (
@@ -52,6 +58,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         config,
         setUser,
         setConfig: handleConfig,
+        removeUser
       }}
     >
       {children}

@@ -26,7 +26,7 @@ export const fetchInterceptor = (() => {
   const setRequestInterceptor = (
     interceptor: (
       url: string,
-      config: RequestInit
+      config: RequestInit & { params?: Record<string, any> }
     ) => Promise<[string, RequestInit]>
   ) => {
     interceptors.request = interceptor;
@@ -40,7 +40,7 @@ export const fetchInterceptor = (() => {
 
   const fetchWithInterceptor = async <T = any>(
     url: string,
-    config: RequestInit = {}
+    config: RequestInit  & { params?: Record<string, any> } = {}
   ): Promise<T> => {
     try {
       const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;

@@ -17,6 +17,7 @@ import { AuthFormType, FormField } from "@/interface/form.dto";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DynamicForm from "@/components/organism/forms/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
+import { TermAndCondition } from "@/components/atom/terms";
 
 interface AuthFormProps {
   registerForm: FormField[];
@@ -65,17 +66,7 @@ export default function AuthForm(props: AuthFormProps) {
       >
         {(form) => (
           <>
-            <div className="text-sm text-center text-tin mt-6 py-4">
-              By {template === 'register' ? "creating an account," : "continuing,"} you agree with our{" "}
-              <Link href="#" className="underline hover:text-foreground text-onyx">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link href="#" className="underline hover:text-foreground text-onyx">
-                Privacy Policy
-              </Link>
-              .
-            </div>
+            <TermAndCondition type={template} />
 
             <Button
               type="submit"

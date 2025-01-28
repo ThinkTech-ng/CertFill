@@ -5,6 +5,7 @@ import { FormField } from "@/interface/form.dto";
 import { generateValidationSchema } from "@/utils/generateValidationSchema";
 import { Input, OtpInput, PasswordInput } from "@/components/molecule/input";
 import { Textarea } from "@/components/molecule/textarea";
+import { cn } from "@/utils/utils";
 
 interface DynamicFormProps {
   hideError?: boolean
@@ -38,8 +39,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     switch (field.type) {
       case "select":
         return (
-          <select id={field.name} {...register(field.name)}>
-            <option value="">Select an option</option>
+          <select className={cn("inputField block w-full flex-1", field?.className)} id={field.name} {...register(field.name)}>
+            <option value="">{field.placeholder || "Select an option"}</option>
             {field.options?.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -50,7 +51,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       case "checkbox":
         return (
           <Input
-            className="h-[46px]"
+            className={cn("h-[46px]", field.inputClassName)}
             type="checkbox"
             id={field.name}
             defaultChecked={true}
@@ -63,7 +64,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             {field.options?.map((option) => (
               <div key={option.value}>
                 <Input
-                  className="h-[46px]"
+                  className={cn("h-[46px]", field.inputClassName)}
                   type="radio"
                   id={`${field.name}-${option.value}`}
                   value={option.value}
@@ -79,7 +80,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       case "password":
         return (
           <PasswordInput
-            className="h-[46px]"
+            className={cn("h-[46px]", field.inputClassName)}
             type={field.type}
             id={field.name}
             placeholder={field.placeholder}
@@ -90,7 +91,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         const action = register(field.name)
         return (
           <OtpInput
-            className="h-[46px]"
+            className={cn("h-[46px]", field.inputClassName)}
             id={field.name}
             placeholder={field.placeholder}
             inputMode='search'
@@ -106,15 +107,14 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         );
         case "textarea":
           return <Textarea 
-          className="h-[46px]"
-          type={field.type}
+          className={cn("h-[46px]", field.inputClassName)}
           id={field.name}
           placeholder={field.placeholder}
           {...register(field.name)}
           />
       default:
        return <Input
-          className="h-[46px]"
+          className={cn("h-[46px]", field.inputClassName)}
           type={field.type}
           id={field.name}
           placeholder={field.placeholder}
@@ -136,7 +136,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           key={field.name}
           style={{ marginBottom: "1rem" }}
         >
-          <label htmlFor={field.name} className="text-base font-medium">
+          <label htmlFor={field.name} className={cn("text-base font-medium", field.labelClassName)}>
             {field.label}
           </label>
           {renderFormInput(field)}

@@ -8,6 +8,7 @@ import logo from "@/public/certLogoWithText.svg";
 import { layoutAsideDescription } from "./data";
 import { cn } from "@/utils/utils";
 import { AppContext } from "@/service/context";
+import Link from "next/link";
 
 interface AppLayoutProps extends React.PropsWithChildren {
     description?: string
@@ -24,9 +25,11 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
       })}>
 
       {app.config?.layout === "plain" && <>
+        <Link href={'/admin'}  className="cursor-pointer">
         <div>
             <Image src={logo} className="w-32 h-10 max-sm:mx-auto" alt="certificate" />
           </div>
+          </Link>
         </>
 }
         {app.config?.layout !== "plain" && <>
@@ -43,9 +46,11 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
           <Image src={cert} alt="certificate" width={400} />
         </div>
         <div>
-          <div>
+        <Link href={'/admin'} className="cursor-pointer">
+        <div>
             <Image src={logo} className="w-32 h-10 max-sm:mx-auto" alt="certificate" />
           </div>
+          </Link>
           <div className="text-xs sm:text-xl pt-6 font-generalSans max-sm:text-center max-sm:leading-5">
             {props.description || layoutAsideDescription}
           </div>

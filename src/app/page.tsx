@@ -24,7 +24,7 @@ import { AppContext } from "@/service/context";
 export default function Home() {
   const router = useRouter();
   const [, setTempEmail] = useSessionStorage("temp-email", null);
-  const { setUser } = React.use(AppContext);
+  const { setUser, removeUser } = React.use(AppContext);
   const formSettings: FormField[] = [
     {
       type: "email",
@@ -69,9 +69,11 @@ export default function Home() {
           response.status === "success"
         ) {
           router.push("/verify");
+          return
         }
-        setUser(response.data as unknown as LoginUser);
-        router.push("/admin");
+        
+        setUser({...(response.data || {}), ...(response.data?.user || {})} as unknown as LoginUser);
+        router.push(response.data.username && response.data.phone ? "/admin" : "/admin/profile");
       } catch (e) {
         const error = e as AuthError;
         if (error.message == "Validation failed") {
@@ -93,6 +95,7 @@ export default function Home() {
   React.useEffect(() => {
     router.prefetch("/admin");
     router.prefetch("/verify");
+    removeUser()
   }, []);
   return (
     <AuthForm
