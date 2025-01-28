@@ -176,11 +176,11 @@ function ProgramDetailsPage() {
           className="w-full h-[50px]"
           onClick={() => mutation.mutate({ id, sendEmail, idempotencyKey })}
         >
-          {program.paymentPlan === "issuer"
+          {program.paymentPlan === "issuer" && !program.paymentComplete
             ? "Proceed to make payment"
             : "Complete and Continue"}
         </Button>
-        {/* { ' TODO': calculate the number of rows in the csv and show here with amount} */}
+        {/* { ' TODO': calculate for additional courses and students */}
         <p className="py-2 text-center">
           <span>
             You've successfully uploaded {formatToCurrency(totalRecipients)}{" "}
