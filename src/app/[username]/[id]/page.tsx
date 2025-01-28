@@ -82,15 +82,6 @@ export default function GetProgramCertificate() {
           setNotFound(true)
           return
         }
-        // const response = await customFetch<{ message: string, data: { id: string} }>(
-        //   `/certificates/generate-url`,
-        //   { method: "POST", body: JSON.stringify({ recipient: user.id, course: courses.id, }) }
-        // );
-        // toast.info(response?.message);
-        // if (programs.paymentPlan === 'issuer'){
-        //   router.push(`/${user.id}`)
-        //   return
-        // } 
 
         setPaidGenerate({ user, course: courses, programs })
       } catch (e) {

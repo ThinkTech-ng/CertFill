@@ -4,11 +4,12 @@ import Image from "next/image";
 import thinktech from "@/public/thinktechLogo.svg";
 import cert from "@/public/images/certImage.svg";
 import logo from "@/public/certLogoWithText.svg";
-  import React from "react";
+  import React, { Suspense } from "react";
 import { layoutAsideDescription } from "./data";
 import { cn } from "@/utils/utils";
 import { AppContext } from "@/service/context";
 import Link from "next/link";
+import { LoadingAtom } from "@/components/atom/loading";
 
 interface AppLayoutProps extends React.PropsWithChildren {
     description?: string
@@ -64,7 +65,9 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
       </div>
       <div className="sm:h-full overflow-auto grow bg-white py-15 px-2 sm:p-20 text-black">
       <div className=" flex flex-col justify-between w-full h-full max-w-[600px] m-auto">
+      <Suspense fallback={<LoadingAtom />}>        
         {props.children}
+      </Suspense>
       </div>
       </div>
     </div>

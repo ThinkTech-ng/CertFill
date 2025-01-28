@@ -1,47 +1,103 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 import { User } from "@/interface/user.dto";
 import customFetch from "@/service/https";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { fetchCertificate } from "@/service/programs";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { completeRecipientPayment, fetchCertificate, generateRecipientPayment } from "@/service/programs";
 import { LoadingAtom } from "@/components/atom/loading";
 import { CertificateNotFound } from "./not-found";
 import { Button } from "@/components/molecule/button";
 import { formatToCurrency } from "@/utils/utils";
+import { toast } from "sonner";
+import PaystackPop from "@paystack/inline-js";
 
 interface PaidCertificateProps {
   program: {
     user: any;
     course: Record<string, any>;
-    program: Record<string, any>;
+    programs: Record<string, any>;
   };
 }
 export const PaidCertificate: React.FC<PaidCertificateProps> = (props) => {
-  console.log(props)
+  const router = useRouter()
+
+  const finalize = useMutation({
+    mutationFn: completeRecipientPayment,
+    onError(error) {
+      toast.error(error.message);
+    },
+    onSuccess: async ({ data, code }, v, con) => {
+      if (code === "PAYMENT_SUCCESSFUL") {
+        router.push(`/cert/${data.shortcode}`);
+      } else {
+        finalize.reset();
+      }
+    },
+  });
+  const mutation = useMutation({
+    mutationFn: generateRecipientPayment,
+    onError(error) {
+      toast.error(error.message);
+    },
+    onSuccess: async ({ data, code }) => {
+      if (code === "PROGRAM_SUCCESSFUL" && data.shortcode?.startsWith("CFR.")) {
+        router.push(`/cert/${data.shortcode}`);
+        return;
+      }
+      if (code === "PAYMENT_REQUIRED" && data.pay) {
+        try {
+          const popup = new PaystackPop();
+          await popup.checkout({
+            ...data.pay,
+            onSuccess(tranx) {              
+              finalize.mutate(tranx);
+            },
+            onError(error) {
+              if (error?.message?.toLowerCase()?.includes("duplicate")) {
+                console.log(data);
+                finalize.mutate(data.pay);
+                return;
+              }
+              toast.error(error.message);
+            },
+          });
+        } catch (e) {
+          // TODO: track analytic
+        }
+        return;
+      }
+      throw "Please upload all required documents.";
+    },
+  });
   const isFreePaid =(
-    props?.program?.program?.paymentPlan === "issuer" &&
-    props?.program?.program?.paymentComplete )|| props.program?.user?.hasCompleted;
+    props?.program?.programs?.paymentPlan === "issuer" &&
+    props?.program?.programs?.paymentComplete )|| props.program?.user?.hasCompleted;
   const text = isFreePaid
     ? "Download Certificate"
-    : `Pay ₦${formatToCurrency(props?.program?.program?.price || 1900)} to download`;
+    : `Pay ₦${formatToCurrency(props?.program?.programs?.price || '') || ''} to download`;
   const onDownload = (action: any) => () => {
     if (!isFreePaid) {
-      // show modal to pay
+      mutation.mutate({ id: props?.program?.user._id })
+      return
     }
+    console.log(isFreePaid, 'got here')
     action();
   };
   return (
     <>
       <CertificateContent
+        filename={`${props?.program?.course?.name} ${props?.program?.programs.name} certificate`}
         isFree={isFreePaid}
         onDownload={onDownload}
         downloadBtnText={text}
         id={props?.program?.user._id}
+        loading={mutation.isPending || finalize.isPending}
+disabled={mutation.isPending || finalize.isPending}
       />
     </>
   );
@@ -51,14 +107,15 @@ function CertificateContent({
   id,
   downloadBtnText,
   isFree,
-  onDownload
+  onDownload,
+  ...props
 }: {
   id: string;
   isFree?: boolean;
   downloadBtnText: string;
   onDownload: (cb: () => {}) => () => void;
+  [key:string]: any
 }) {
-  console.log({ id });
   const printRef = React.useRef(null);
 
   const { data: { data: certificate } = {}, isLoading } = useQuery<any>({
@@ -67,8 +124,6 @@ function CertificateContent({
   });
 
   const previewText = "Certfill Preview Copy";
-
-  console.log({ certificate, id });
 
   const [pdfLoaded, setPdfLoaded] = useState<boolean>(false);
 
@@ -132,7 +187,7 @@ function CertificateContent({
       const pdfBytes = await pdfDoc.save();
 
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      saveAs(blob, "certificate.pdf");
+      saveAs(blob, (props.filename || 'Certificate') + ".pdf");
     } catch (error) {
       console.error("Error generating PDF:", error);
     }
@@ -141,7 +196,7 @@ function CertificateContent({
   return (
     <div className="h-full w-full">
       <div
-        className="mt-20 mx-auto h-[400px] w-[527px] relative pdf-container"
+        className="mt-20 mx-auto h-[400px] max-w-[99%] w-[527px] relative pdf-container"
         ref={printRef}
       >
         <iframe
@@ -188,8 +243,8 @@ function CertificateContent({
         )}
       </div>
 
-      <div className="mt-6 flex justify-center relative z-50">
-        <Button className="font-semibold" onClick={onDownload(handleDownloadPdf)}>
+      <div className="mt-6 flex justify-center relative z-50" style={{ zIndex: 120222}}>
+        <Button loading={props.loading} disabled={props.disabled} className="font-semibold w-full h-[46px] text-base" onClick={onDownload(handleDownloadPdf)}>
           {downloadBtnText}
         </Button>
       </div>
