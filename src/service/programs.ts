@@ -40,9 +40,22 @@ export const confirmProgramPayment = async (data: Record<any, any>) => {
   return response;
 };
 
-
 export const fetchCertificate = async (data: Record<any, any>) => {
   return await customFetch(
     `/certificates/certificates/${data.id}`)
+};
 
+export const fetchUserCertificate = async (data: Record<any, any>) => {
+  return await customFetch(
+    `/certificates/my/${data.id}`)
+};
+
+export const generateRecipientPayment = async (data: Record<any, any>) => {
+  return await customFetch(
+    `/transaction/certificate/${data.id}`)
+};
+
+export const completeRecipientPayment = async (data: Record<any, any>) => {
+  return await customFetch(
+    `/transaction/certificate/${data.reference || data.id}/complete`)
 };

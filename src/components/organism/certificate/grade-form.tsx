@@ -256,7 +256,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
           Download the CSV template here to see the correct data format before
           uploading.
           <a
-            href="/favicon.ico"
+            href="/RecipientSample.csv"
             download
             className="text-[#FF2B00] underline pl-1 cursor-pointer"
           >

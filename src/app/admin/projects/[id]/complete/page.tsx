@@ -26,7 +26,8 @@ export default function CompleteCourseSetup(){
             </div>
         )
     }
-    const url = `https://certfill.com/${app.user?.user?.username}/${id}`
+    const baseUrl = window.location.origin
+    const url = `${baseUrl}/${app.user?.user?.username}/${id}`
     return (
     <div className="h-full w-full flex flex-col items-center justify-center">
           <Image src={ribbon} className=" h-[200px] max-sm:mx-auto" alt="certificate" />
