@@ -58,22 +58,24 @@ export default function Home() {
 
       try {
         const response = await customFetch<{
-          data: User;
+          data: { user: User};
           status: AuthError["status"];
         }>(`/auth/${type}`, { method: "POST", body: JSON.stringify(data) });
+        const user = response.data?.user || {}
 
         if (
           type === "register" &&
-          response.data.email &&
-          response.data.id &&
+          user.email &&
+          user.id &&
           response.status === "success"
         ) {
           router.push("/verify");
           return
         }
+
         
-        setUser({...(response.data || {}), ...(response.data?.user || {})} as unknown as LoginUser);
-        router.push(response.data.username && response.data.phone ? "/admin" : "/admin/profile");
+        setUser({...(response.data || {}), ...user} as unknown as LoginUser);
+        router.push(user.username && user.phone ? "/admin" : "/admin/profile");
       } catch (e) {
         const error = e as AuthError;
         if (error.message == "Validation failed") {

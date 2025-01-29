@@ -44,7 +44,7 @@ export default function Admin() {
     router.prefetch('/admin/projects/any/courses')
   }, [])
   return (
-    <div className="min-h-screen h-full p-5">
+    <div className="min-h-screen h-full p-5 py-0">
       <span className="text-2xl sm:text-3xl">
         Welcome {user?.user?.name?.split(" ")[0]}!
       </span>
