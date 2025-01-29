@@ -6,6 +6,7 @@ import { Button } from "@/components/molecule/button";
 import { FileUpload } from "@/components/molecule/file-upload";
 import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
 import { env } from '../../../../env';
+import { certificateTextTitle } from "@/store/certificate";
 interface GradeFormProps {
   courseId: string;
   onSave: (course: any)=> void
@@ -156,7 +157,7 @@ setRecipientsFile(null)
     const x = e.clientX - containerRect.left - boxWidth / 2;
     const y = e.clientY - containerRect.top - boxHeight / 2;
 
-    setBox({ x, y, text: "Enter Name", width: boxWidth, height: boxHeight });
+    setBox({ x, y, text: certificateTextTitle, width: boxWidth, height: boxHeight });
   };
 
   const handleTextChange = (text: string) => {

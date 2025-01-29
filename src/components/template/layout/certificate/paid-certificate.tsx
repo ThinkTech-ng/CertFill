@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fontkit from '@pdf-lib/fontkit';
 
-import { User } from "@/interface/user.dto";
-import customFetch from "@/service/https";
 import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import { completeRecipientPayment, fetchCertificate, generateRecipientPayment } from "@/service/programs";
 import { LoadingAtom } from "@/components/atom/loading";
@@ -15,7 +14,7 @@ import { Button } from "@/components/molecule/button";
 import { formatToCurrency } from "@/utils/utils";
 import { toast } from "sonner";
 import PaystackPop from "@paystack/inline-js";
-
+import { env } from "@/components/../../env";
 interface PaidCertificateProps {
   program: {
     user: any;
@@ -85,7 +84,6 @@ export const PaidCertificate: React.FC<PaidCertificateProps> = (props) => {
       mutation.mutate({ id: props?.program?.user._id })
       return
     }
-    console.log(isFreePaid, 'got here')
     action();
   };
   return (
@@ -122,6 +120,7 @@ function CertificateContent({
     queryKey: ["certificate-"],
     queryFn: async () => await fetchCertificate({ id }),
   });
+  console.log(certificate, 'slsl')
 
   const previewText = "Certfill Preview Copy";
 
@@ -141,8 +140,20 @@ function CertificateContent({
       const existingPdfBytes = await response.arrayBuffer();
 
       const pdfDoc = await PDFDocument.load(existingPdfBytes);
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      pdfDoc.registerFontkit(fontkit);
 
+
+      const fontUrl = `/fonts/${certificate.certificate.fontFamily}/bold.ttf`
+      const fontResponse = await fetch(fontUrl);
+if (!fontResponse.ok) throw new Error(`Failed to fetch font: ${fontResponse.statusText}`);
+const fontBytes = await fontResponse.arrayBuffer();
+
+console.log("Font file size:", fontBytes.byteLength); // Debug: Check if font is loaded
+if (fontBytes.byteLength === 0) throw new Error("Font file is empty!");
+
+      // const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
+      const font = await pdfDoc.embedFont(fontBytes);
+  
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const { width: pageWidth, height: pageHeight } = firstPage.getSize();
@@ -173,8 +184,19 @@ function CertificateContent({
         recipientFontSize
       );
 
+      const iframeSize = {
+        top: certificate.certificate.position.y,
+                left: certificate.certificate.position.x,
+                width: 450,
+                height: 50,
+                fontSize: certificate.certificate.fontSize,
+                fontFamily: certificate.certificate.fontFamily,
+                color: "black",
+      }
+      // const recipientX = (pageWidth - recipientTextWidth) / 2;
+      // const recipientY = pageHeight - certificate.certificate.position.y;
       const recipientX = (pageWidth - recipientTextWidth) / 2;
-      const recipientY = pageHeight - certificate.certificate.position.y;
+      const recipientY = (pageHeight/1.29) - certificate.certificate.position.y;
 
       firstPage.drawText(recipientName, {
         x: recipientX,
@@ -187,7 +209,7 @@ function CertificateContent({
       const pdfBytes = await pdfDoc.save();
 
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      saveAs(blob, (props.filename || 'Certificate') + ".pdf");
+      saveAs(blob, (props.filename || 'Certificate') + ".pdf", );
     } catch (error) {
       console.error("Error generating PDF:", error);
     }

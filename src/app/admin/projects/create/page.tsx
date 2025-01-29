@@ -89,7 +89,7 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="p-5 pb-20 flex flex-col gap-5 h-full justify-between relative">
+    <div className="p-5 pb-20 flex flex-col gap-5 h-full py-12 justify-between relative">
       <h2 className="text-2xl sm:text-3xl">Add programs or courses</h2>
 
       <DynamicForm
@@ -100,9 +100,9 @@ export default function CreateProject() {
       >
         {(form) => (
           <div className="pb-28">
-            <div className="absolute right-5 top-5">
+            <div className="absolute right-5 top-10 bg-white">
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-[50px] outline outline-0 flex justify-end">
+                <DropdownMenuTrigger className="w-[50px] outline outline-0 flex justify-end pb-5">
                   <Bolt />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-whiteout p-8 w-[300px] min-h-[300px] drop-shadow-xl sm:absolute right-0 sm:-mr-5">

@@ -89,7 +89,7 @@ export default function UpdateUserProfile() {
   }, []);
   return (
     <>
-      <div className="flex flex-col gap-5 py-10 px-5">
+      <div className="flex flex-col gap-5 pb-10 px-5">
         <h3 className="text-3xl font-bold  text-black pb-10">
         Complete Details
         </h3>
