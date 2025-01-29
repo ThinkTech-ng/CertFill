@@ -1,4 +1,4 @@
-import { certificateFontFamily } from "@/store/certificate"
+import { certificateFontFamily, certificateTextTitle } from "@/store/certificate"
 
 export const EditCertificate = ()=>{
 
@@ -15,7 +15,7 @@ export const EditCertificate = ()=>{
     const x = e.clientX - containerRect.left - boxWidth / 2;
     const y = e.clientY - containerRect.top - boxHeight / 2;
 
-    setBox({ x, y, text: "Enter Name", width: boxWidth, height: boxHeight });
+    setBox({ x, y, text: certificateTextTitle, width: boxWidth, height: boxHeight });
     console.log(x, y);
   };
 
