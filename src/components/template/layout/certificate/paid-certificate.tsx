@@ -144,7 +144,14 @@ function CertificateContent({
 
 
       const fontUrl = `/fonts/${certificate.certificate.fontFamily}/bold.ttf`
-      const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
+      const fontResponse = await fetch(fontUrl);
+if (!fontResponse.ok) throw new Error(`Failed to fetch font: ${fontResponse.statusText}`);
+const fontBytes = await fontResponse.arrayBuffer();
+
+console.log("Font file size:", fontBytes.byteLength); // Debug: Check if font is loaded
+if (fontBytes.byteLength === 0) throw new Error("Font file is empty!");
+
+      // const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
       const font = await pdfDoc.embedFont(fontBytes);
   
       const pages = pdfDoc.getPages();
