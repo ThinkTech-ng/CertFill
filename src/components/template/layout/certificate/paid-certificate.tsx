@@ -53,7 +53,7 @@ export const PaidCertificate: React.FC<PaidCertificateProps> = (props) => {
           const popup = new PaystackPop();
           await popup.checkout({
             ...data.pay,
-            onSuccess(tranx) {              
+            onSuccess(tranx) {
               finalize.mutate(tranx);
             },
             onError(error) {
@@ -153,7 +153,7 @@ if (fontBytes.byteLength === 0) throw new Error("Font file is empty!");
 
       // const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
       const font = await pdfDoc.embedFont(fontBytes);
-  
+
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const { width: pageWidth, height: pageHeight } = firstPage.getSize();
@@ -200,7 +200,7 @@ if (fontBytes.byteLength === 0) throw new Error("Font file is empty!");
 
       firstPage.drawText(recipientName, {
         x: recipientX,
-        y: recipientY - 17, // Adjusted Y position
+        y: recipientY, // Adjusted Y position
         size: recipientFontSize,
         font,
         color: rgb(0, 0, 0),
