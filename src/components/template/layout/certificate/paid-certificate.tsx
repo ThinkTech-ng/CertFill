@@ -19,6 +19,7 @@ import { fetchFont } from "@/utils/handlePDF";
 import { toast } from "sonner";
 import PaystackPop from "@paystack/inline-js";
 import { GlobalWorkerOptions } from "pdfjs-dist";
+import { certificatePDFFontSizeWidth } from "@/store/certificate";
 
 GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
@@ -160,7 +161,7 @@ function CertificateContent({
       const frameWidth = certificate.certificate.position.frameWidth;
       const frameHeight = certificate.certificate.position.frameHeight;
       const x = certificate.certificate.position.x;
-      const y = certificate.certificate.position.y;
+      const y = certificate.certificate.position.y - certificatePDFFontSizeWidth[certificate.certificate.fontSize];
 
       const newX = calculatePercent(percentOfFrame(x, frameWidth), pdfWidth);
       const newY = calculatePercent(percentOfFrame(y, frameHeight), pdfHeight);
@@ -178,11 +179,12 @@ function CertificateContent({
 
       page.drawText(textData.label, {
         x: xFinal,
-        y: yFinal + 20, // add 20 because it always removes around 15 to 30 px extra because of the frame calculation
+        y: yFinal,// + 20, // add 20 because it always removes around 15 to 30 px extra because of the frame calculation
         font,
         size:
-          certificate.certificate.fontSize +
-          certificate.certificate.fontSize / 4.2,
+          certificate.certificate.fontSize,
+          //  +
+          // certificate.certificate.fontSize / 7,
         color: rgb(0, 0, 0),
       });
 
