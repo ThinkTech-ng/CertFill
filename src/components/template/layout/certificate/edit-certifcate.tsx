@@ -133,7 +133,7 @@ export const EditCertificate = ()=>{
                   onClick={handleSave}
                   className="saveButton h-[56px] max-w-[388px]"
                 >
-                  Save and Exit
+                  Save and Exit 
                 </button>
               </div>
 

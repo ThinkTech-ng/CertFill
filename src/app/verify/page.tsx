@@ -20,10 +20,12 @@ import React from "react";
 import { Button } from "@/components/molecule/button";
 import Link from "next/link";
 import { useSessionStorage } from "usehooks-ts";
+import { AppContext } from "@/service/context";
 
 export default function VerifyUser() {
   const router = useRouter();
   const [email, , removeTempEmail] = useSessionStorage("temp-email", null);
+  const { config, setConfig } = React.use(AppContext);
 
   const formSettings: FormField[] = [
     {
@@ -38,6 +40,8 @@ export default function VerifyUser() {
   const handleSubmit =
     (formState: UseFormReturn) => async (data: Record<string, any>) => {
       try {
+        setConfig({ loading: true })
+
         const response = await customFetch<{ message: string }>(
           `/auth/verify-email`,
           { method: "POST", body: JSON.stringify({ ...data, email }) }
@@ -48,6 +52,8 @@ export default function VerifyUser() {
       } catch (e) {
         const error = e as AuthError;
         if (error.message == "Validation failed") {
+        setConfig({ loading: false })
+
           const { message, fields } = validateDynamicFormError(
             error.errors,
             formSettings
@@ -61,11 +67,16 @@ export default function VerifyUser() {
         if (error.code === "EMAIL_VERIFIED") {
           removeTempEmail();
           router.replace("/verify-success");
+          return
         }
+        setConfig({ loading: false })
+
       }
     };
   const resendCode = async () => {
     try {
+      setConfig({ loading: true })
+
         toast.info('Check your email for verification code.')
       const response = await customFetch<{
         message: string;
@@ -75,6 +86,7 @@ export default function VerifyUser() {
         body: JSON.stringify({ email }),
       });
       toast.info(response?.message);
+      setConfig({ loading: false })
     } catch (e) {
       const error = e as AuthError;
       toast.error(error?.message);
@@ -82,7 +94,10 @@ export default function VerifyUser() {
       if (error.code === "EMAIL_VERIFIED") {
         removeTempEmail();
         router.replace("/verify-success");
+        return
       }
+      setConfig({ loading: false })
+
     }
   };
 
@@ -129,10 +144,11 @@ export default function VerifyUser() {
 
               <Button
                 type="submit"
-                disabled={
-                  !form.formState.isValid || form.formState.isSubmitting
-                }
+                disabled={!form.formState.isValid || form.formState.isSubmitting || config?.loading}
+                loading={form.formState.isSubmitting || config?.loading}
+  
                 className="w-full h-[46px] text-base  mt-4"
+                
               >
                 Verify
               </Button>

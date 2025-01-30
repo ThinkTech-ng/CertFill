@@ -7,15 +7,19 @@ import { FileUpload } from "@/components/molecule/file-upload";
 import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
 import { env } from '../../../../env';
 import { certificateTextTitle } from "@/store/certificate";
+import { AppContext } from "@/service/context";
+import renderPDF from "@/utils/renderPDF";
 interface GradeFormProps {
   courseId: string;
   onSave: (course: any)=> void
 }
 
 function GradeForm({ courseId, onSave }: GradeFormProps) {
+
   const [certificate, setCertificate] = useState<File | null>(null);
   const [recipientsFile, setRecipientsFile] = useState<File | null>(null);
   const [certificateURL, setCertificateURL] = useState<string | null>(null);
+  const [certificateIframeUrl, setCertificateIframeUrl] = useState<string | null>(null);
   const [certificateId, setCertificateId] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [box, setBox] = useState<{
@@ -29,10 +33,16 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const [selectedFont, setSelectedFont] = useState<string>("font-inter");
   const router = useRouter();
   const boxRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLDivElement>(null);
   const [selectedFontSize, setSelectedFontSize] = useState<number>(16);
+  const [certificateDemo, setCertificateDemo] = useState<any>(null);
+  const [hasPreviewed, setHasPreviewed] = useState<any>(false);
+  const { setConfig, config } = React.use(AppContext);
 
   const handleFontSizeChange = (size: number) => {
     setSelectedFontSize(size);
+    handleBlur()
+
   };
   const reset = ()=>{
     setCertificate(null)
@@ -100,16 +110,24 @@ setRecipientsFile(null)
 
     try {
       const certificateFileURL = await uploadCertFile(certificate);
+      const inframe = document.getElementById("certificate-upload-popup-iframe")
+      console.log((boxRef?.current?.clientHeight || 0), boxRef, 'popopo')
+      let addY = (boxRef?.current?.clientHeight || 0)
+      addY =  addY/1.5 || 0
+      
       const certificateDetails = {
         course: courseId,
         fontSize: selectedFontSize,
         fontFamily: selectedFont,
         position: {
           x: box.x,
-          y: box.y,
+          y: box.y + addY,
+          frameWidth: (iframeRef?.current || inframe)?.clientWidth || 0,
+          frameHeight: (iframeRef?.current || inframe)?.clientHeight || 0,
         },
         certificateFile: certificateFileURL,
       };
+      setCertificateDemo(certificateDetails)
       const { data } = await customFetch("/certificates", {
         method: "POST",
         body: JSON.stringify(certificateDetails),
@@ -118,6 +136,7 @@ setRecipientsFile(null)
       console.log("Certificate details saved successfully:", data);
       setCertificateId(data._id);
       toast.success("Certificate details saved successfully");
+      return certificateDetails
     } catch (error) {
       console.error("Error saving certificate details:", error);
     }
@@ -128,6 +147,7 @@ setRecipientsFile(null)
       if (!recipientsFile || !certificateId) {
         throw new Error("Please upload a recipients file and certificate");
       }
+      
       const recipipentFileUrl = await uploadRecipientFile(recipientsFile);
       const courseUpdate = {
         certificateId: certificateId,
@@ -142,6 +162,7 @@ setRecipientsFile(null)
       toast.success("Course saved successfully");
       onSave(response.data)
       reset()
+      setConfig({ fileChanged: false })
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error saving course");
@@ -151,17 +172,23 @@ setRecipientsFile(null)
   const handleAddBox = (e: React.MouseEvent<HTMLDivElement>) => {
     if (box) return;
 
+    console.log('setup box', { box })
     const containerRect = e.currentTarget.getBoundingClientRect();
-    const boxWidth = 450;
+    const boxWidth = 400;
     const boxHeight = 50;
-    const x = e.clientX - containerRect.left - boxWidth / 2;
-    const y = e.clientY - containerRect.top - boxHeight / 2;
+    // const x = e.clientX - containerRect.left - boxWidth / 2;
+    // const y = e.clientY - containerRect.top - boxHeight / 2;
+    const newX = e.clientX - containerRect.left
+    const newY = e.clientY - containerRect.top
+    const x = Math.max(0, Math.min(newX, containerRect.width - boxWidth));
+    const y = Math.max(0, Math.min(newY, containerRect.height - boxHeight));
 
     setBox({ x, y, text: certificateTextTitle, width: boxWidth, height: boxHeight });
   };
 
   const handleTextChange = (text: string) => {
     setBox((prev) => (prev ? { ...prev, text } : null));
+    handleBlur()
   };
 
   const handleFocus = () => {
@@ -174,9 +201,10 @@ setRecipientsFile(null)
 
   const handleFontChange = (font: string) => {
     setSelectedFont(font);
+    handleBlur()
   };
 
-  const handleDragStart = (e: React.MouseEvent, corner: string) => {
+  const handleDragStart = (e: React.MouseEvent, corner: string, boxRefs?: any) => {
     e.preventDefault();
 
     const startX = e.clientX;
@@ -188,6 +216,12 @@ setRecipientsFile(null)
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX;
       const dy = moveEvent.clientY - startY;
+      console.log(
+        dx, moveEvent.clientX, startX,
+        '0987654567890',
+         dy, moveEvent.clientY, startY
+        )
+
 
       let newX = initialX;
       let newY = initialY;
@@ -207,6 +241,7 @@ setRecipientsFile(null)
       }
 
       setBox((prev) => (prev ? { ...prev, x: newX, y: newY } : null));
+      boxRef.current = boxRefs.current
     };
 
     const handleMouseUp = () => {
@@ -223,11 +258,36 @@ setRecipientsFile(null)
       alert("Please upload a certificate.");
       return;
     }
+    setConfig({ loading: true })
 
-    saveCertificateDetails();
+   await saveCertificateDetails();
     setPopupVisible(false);
     router.refresh();
+    setConfig({ loading: false })
   };
+
+  const onPreview = async ()=>{
+    setCertificateIframeUrl(null)
+    if (hasPreviewed){
+      setHasPreviewed(false)
+      setBox(null)
+      return
+    }
+    toast.error(`Please wait, generating preview.`)
+    const data = await saveCertificateDetails();
+
+    if (!data){
+      toast.error(`Please select a certificate.`)
+      return
+    }
+    const vl = await renderPDF(data?.certificateFile, {
+      ...(data || {}),
+      certificate: data,
+      recipient: { name: "John Dawn" }
+    })
+    setCertificateIframeUrl(vl)
+    setHasPreviewed(true)
+  }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -242,6 +302,14 @@ setRecipientsFile(null)
     };
   }, [box]);
 
+  useEffect(() => {
+    setConfig({ loading: false })
+    return () => {
+      setConfig({ loading: false })   
+     };
+  }, []);
+
+  console.log(iframeRef)
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
@@ -277,6 +345,8 @@ setRecipientsFile(null)
           type="button"
           variant={"outline"}
           onClick={handleSaveCourse}
+          disabled={config?.loading || !config?.fileChanged}
+          loading={config?.loading}
         >
           Save Changes
         </Button>
@@ -284,7 +354,7 @@ setRecipientsFile(null)
         {popupVisible && certificateURL && (
           <CertificateUploadPopup
           handleFileChange={handleFileChange('certificate')}
-            certificateURL={certificateURL}
+            certificateURL={certificateIframeUrl || certificateURL}
             onSave={handleSave}
             onAddBox={handleAddBox}
             box={box}
@@ -297,7 +367,13 @@ setRecipientsFile(null)
             onBlur={handleBlur}
             isFocused={isFocused}
             onDragStart={handleDragStart}
-          />
+            iframeRef={iframeRef}
+            onPreview={onPreview}
+hasPreviewed={hasPreviewed}
+
+pdfStyle={{}}
+pdfContainerStyle={{}}
+            />
         )}
       </form>
     </div>
@@ -305,3 +381,4 @@ setRecipientsFile(null)
 }
 
 export default GradeForm;
+

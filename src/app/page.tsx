@@ -24,7 +24,7 @@ import { AppContext } from "@/service/context";
 export default function Home() {
   const router = useRouter();
   const [, setTempEmail] = useSessionStorage("temp-email", null);
-  const { setUser, removeUser } = React.use(AppContext);
+  const { setUser, removeUser, setConfig } = React.use(AppContext);
   const formSettings: FormField[] = [
     {
       type: "email",
@@ -57,6 +57,7 @@ export default function Home() {
       setTempEmail(data.email);
 
       try {
+        setConfig({ loading: true })
         const response = await customFetch<{
           data: { user: User};
           status: AuthError["status"];
@@ -77,8 +78,10 @@ export default function Home() {
         setUser({...(response.data || {}), ...user} as unknown as LoginUser);
         router.push(user.username && user.phone ? "/admin" : "/admin/profile");
       } catch (e) {
+        
         const error = e as AuthError;
         if (error.message == "Validation failed") {
+          setConfig({ loading: false })
           const { message, fields } = validateDynamicFormError(
             error.errors,
             form
@@ -89,7 +92,9 @@ export default function Home() {
         }
         if (error.code === "EMAIL_VERIFICATION") {
           router.push("/verify");
+          return
         }
+        setConfig({ loading: false })
         toast.error(error?.message);
       }
     };
@@ -98,6 +103,8 @@ export default function Home() {
     router.prefetch("/admin");
     router.prefetch("/verify");
     removeUser()
+    setConfig({ loading: false })
+    // return ()=> setConfig({ loading: false })
   }, []);
   return (
     <AuthForm

@@ -18,9 +18,11 @@ import { Input } from "@/components/molecule/input";
 import customFetch from "@/service/https";
 import { createProgram } from "@/service/programs";
 import { toast } from "sonner";
+import { AppContext } from "@/service/context";
+import React from "react"
 export default function CreateProject() {
   const router = useRouter();
-
+  const { setUser, removeUser, setConfig } = React.use(AppContext);
   const formSettings: FormField[] = [
     {
       type: "text",
@@ -72,6 +74,8 @@ export default function CreateProject() {
 
   const onSubmit = (_: any) => async (data: { description: string; name: string }) => {
     try {
+    setConfig({ loading: true })
+
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
 
@@ -84,9 +88,17 @@ export default function CreateProject() {
       toast.success(`Your program "${data.name}" was created successfully `)
       return router.push(`/admin/projects/${response.data._id}/courses`)
     } catch (e) {
+    setConfig({ loading: false })
+
       toast.success((e as Error).message || `Could not complete program `)
     }
   };
+
+  React.useEffect(()=>{
+    setConfig({ loading: false })
+    return ()=>  setConfig({ loading: false })
+
+  }, [])
 
   return (
     <div className="p-5 pb-20 flex flex-col gap-5 h-full py-12 justify-between relative">

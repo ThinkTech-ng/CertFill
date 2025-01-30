@@ -18,6 +18,7 @@ import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DynamicForm from "@/components/organism/forms/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TermAndCondition } from "@/components/atom/terms";
+import { AppContext } from "@/service/context";
 
 interface AuthFormProps {
   registerForm: FormField[];
@@ -25,6 +26,7 @@ interface AuthFormProps {
   handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
 }
 export default function AuthForm(props: AuthFormProps) {
+  const { config } = React.use(AppContext);
 
   const search = useSearchParams()
   
@@ -70,8 +72,9 @@ export default function AuthForm(props: AuthFormProps) {
 
             <Button
               type="submit"
-              disabled={!form.formState.isValid || form.formState.isSubmitting}
+              disabled={!form.formState.isValid || form.formState.isSubmitting || config?.loading}
               className="w-full h-[46px] text-base  mt-4"
+              loading={form.formState.isSubmitting || config?.loading}
             >
               {template === 'login' ? "Login to Account": "Create Account"}
             </Button>
@@ -83,7 +86,7 @@ export default function AuthForm(props: AuthFormProps) {
   return (
     <div className="container relative min-h-screen flex items-center justify-center">
       <div className="mx-auto w-full max-w-[440px] space-y-6 min-h-[700px]">
-        <Tabs defaultValue={search.get('action')=== 'login' ?"login" : "register"} className="w-full pb-7 mb-4">
+        <Tabs defaultValue={"login"} className="w-full pb-7 mb-4">
           <TabsList className="w-full grid grid-cols-2 mb-8 bg-transparent">
             <TabsTrigger
               value="login"
