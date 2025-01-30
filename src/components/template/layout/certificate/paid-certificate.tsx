@@ -221,7 +221,6 @@ function CertificateContent({
 
   const handleDownloadPdf = async () => {
     if (!dowloadableUrlBlob) return;
-
     window.open(dowloadableUrlBlob, "_blank");
   };
 
