@@ -86,7 +86,7 @@ export default function AuthForm(props: AuthFormProps) {
   return (
     <div className="container relative min-h-screen flex items-center justify-center">
       <div className="mx-auto w-full max-w-[440px] space-y-6 min-h-[700px]">
-        <Tabs defaultValue={search.get('action')=== 'login' ?"login" : "register"} className="w-full pb-7 mb-4">
+        <Tabs defaultValue={"login"} className="w-full pb-7 mb-4">
           <TabsList className="w-full grid grid-cols-2 mb-8 bg-transparent">
             <TabsTrigger
               value="login"

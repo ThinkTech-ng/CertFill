@@ -25,7 +25,8 @@ interface CertificateUploadPopupProps {
   onBlur: () => void;
   isFocused: boolean;
   onDragStart: (e: React.MouseEvent, corner: string) => void;
-  handleFileChange: (files: FileList | null) => void
+  handleFileChange: (files: FileList | null) => void,
+  iframeRef?: any
 }
 
 const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
@@ -42,8 +43,11 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
   onBlur,
   isFocused,
   onDragStart,
-  handleFileChange
+  handleFileChange,
+  iframeRef
 }) => {
+  console.log(iframeRef, 'in')
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="w-[1240px] max-w-[90%] h-[700px] max-h-[90%] bg-white flex max-sm:flex-col-reverse justify-center gap-10 px-6 items-center ">
@@ -64,6 +68,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
             type="button"
             onClick={onSave}
             className="saveButton h-[56px] max-w-[388px]"
+            data-ref-name="certificate-upload-save"
           >
             Save and Exit
           </button>
@@ -74,6 +79,8 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
             src={`${certificateURL}#toolbar=0`}
             className="w-full h-full border-0 "
             title="PDF Preview"
+            ref={iframeRef}
+            id="certificate-upload-popup-iframe"
           ></iframe>
           {!box && (
             <div

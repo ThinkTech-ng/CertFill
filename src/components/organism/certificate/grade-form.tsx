@@ -31,6 +31,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const [selectedFont, setSelectedFont] = useState<string>("font-inter");
   const router = useRouter();
   const boxRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLDivElement>(null);
   const [selectedFontSize, setSelectedFontSize] = useState<number>(16);
   const [certificateDemo, setCertificateDemo] = useState<any>(null);
   const { setConfig, config } = React.use(AppContext);
@@ -104,6 +105,7 @@ setRecipientsFile(null)
 
     try {
       const certificateFileURL = await uploadCertFile(certificate);
+      const inframe = document.getElementById("certificate-upload-popup-iframe")
       const certificateDetails = {
         course: courseId,
         fontSize: selectedFontSize,
@@ -111,6 +113,8 @@ setRecipientsFile(null)
         position: {
           x: box.x,
           y: box.y,
+          frameWidth: (iframeRef?.current || inframe)?.clientWidth || 0,
+          frameHeight: (iframeRef?.current || inframe)?.clientHeight || 0,
         },
         certificateFile: certificateFileURL,
       };
@@ -258,6 +262,7 @@ setRecipientsFile(null)
      };
   }, []);
 
+  console.log(iframeRef)
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
@@ -315,6 +320,7 @@ setRecipientsFile(null)
             onBlur={handleBlur}
             isFocused={isFocused}
             onDragStart={handleDragStart}
+            iframeRef={iframeRef}
             />
         )}
       </form>

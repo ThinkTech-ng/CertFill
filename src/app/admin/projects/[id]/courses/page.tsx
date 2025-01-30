@@ -46,6 +46,7 @@ function ProgramDetailsPage() {
     error,
     refetch,
   } = useQuery({
+    queryKey: ['single-project'],
     queryFn: () => getSinglePrograms(id as string),
   });
   const finalize = useMutation({
@@ -130,7 +131,8 @@ function ProgramDetailsPage() {
   }, {totalRecipients: 0, noRecipientsNotPaid: 0}) || {};
   const programPrice = Number(program?.price || 1000);
 
-  console.log(program);
+  console.log(program, { totalRecipients,
+    noRecipientsNotPaid});
   const needToPay = program.paymentPlan === "issuer" && (!program.paymentComplete || noRecipientsNotPaid > 0);
 
 
@@ -158,7 +160,7 @@ function ProgramDetailsPage() {
                 </div>
 
                 {activeIndex === course._id && (
-                  <div className="mt-2 text-gray-600 leading-6 w-full font-satoshi text-lg lg:max-w-[650px] slg:max-w-[590px]">
+                  <div className="z-50 mt-2 text-gray-600 leading-6 w-full font-satoshi text-lg lg:max-w-[650px] slg:max-w-[590px]">
                     <GradeForm
                       onSave={handleGradeFormUpdate}
                       courseId={course._id}

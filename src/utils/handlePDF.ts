@@ -7,7 +7,7 @@ const fetchPdf = async (pdfUrl) => {
   return response.arrayBuffer();
 };
 
-const fetchFont = async (fontFamily) => {
+export const fetchFont = async (fontFamily) => {
   const fontUrl = `/fonts/${fontFamily}/bold.ttf`;
   const response = await fetch(fontUrl);
   if (!response.ok) throw new Error(`Failed to fetch font: ${response.statusText}`);
@@ -65,5 +65,32 @@ export const generateCertificatePdf = async (certificate, isFree, previewText) =
   } catch (error) {
     console.error("Error generating PDF:", error);
     throw error;
+  }
+};
+
+export const renderPDF = async (pdfUrl, certificate) => {
+  try {
+    const pdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    pdfDoc.registerFontkit(fontkit);
+    const page = pdfDoc.getPage(0);
+    const fontBytes = await fetchFont(certificate.certificate.fontFamily);
+    const font = await pdfDoc.embedFont(fontBytes);
+
+    page.drawText(certificate.recipient.name, {
+      x: certificate.certificate.position.x,
+      y: certificate.certificate.position.y,
+      font,
+      size: certificate.certificate.fontSize,
+      color: rgb(0, 0, 0),
+    });
+
+    const modifiedPdfBytes = await pdfDoc.save();
+    const pdfBlob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
+    const pdfUrlBlob = URL.createObjectURL(pdfBlob);
+    return pdfUrlBlob
+  } catch (error) {
+    console.error("Error loading PDF:", error);
+    return null
   }
 };
