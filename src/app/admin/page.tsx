@@ -24,8 +24,9 @@ export default function Admin() {
   const router = useRouter();
 
   const { data: { programs, stats } = {}, isLoading } = useQuery({
-    queryKey: ["programs"],
+    queryKey: ['programs'],
     queryFn: getMyPrograms,
+    refetchIntervalInBackground: false,
   });
 
   const actions = [
@@ -90,6 +91,7 @@ export default function Admin() {
         {programs?.map?.((program) => {
           return (
             <ListCard
+            key={program.id || program.name}
               title={program.name}
               actions={actions}
               onAction={onAction(program)}

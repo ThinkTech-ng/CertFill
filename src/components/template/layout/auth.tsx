@@ -18,6 +18,7 @@ import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import DynamicForm from "@/components/organism/forms/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TermAndCondition } from "@/components/atom/terms";
+import { AppContext } from "@/service/context";
 
 interface AuthFormProps {
   registerForm: FormField[];
@@ -25,6 +26,7 @@ interface AuthFormProps {
   handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
 }
 export default function AuthForm(props: AuthFormProps) {
+  const { config } = React.use(AppContext);
 
   const search = useSearchParams()
   
@@ -70,8 +72,9 @@ export default function AuthForm(props: AuthFormProps) {
 
             <Button
               type="submit"
-              disabled={!form.formState.isValid || form.formState.isSubmitting}
+              disabled={!form.formState.isValid || form.formState.isSubmitting || config?.loading}
               className="w-full h-[46px] text-base  mt-4"
+              loading={form.formState.isSubmitting || config?.loading}
             >
               {template === 'login' ? "Login to Account": "Create Account"}
             </Button>

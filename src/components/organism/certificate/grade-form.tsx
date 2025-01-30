@@ -7,12 +7,14 @@ import { FileUpload } from "@/components/molecule/file-upload";
 import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
 import { env } from '../../../../env';
 import { certificateTextTitle } from "@/store/certificate";
+import { AppContext } from "@/service/context";
 interface GradeFormProps {
   courseId: string;
   onSave: (course: any)=> void
 }
 
 function GradeForm({ courseId, onSave }: GradeFormProps) {
+
   const [certificate, setCertificate] = useState<File | null>(null);
   const [recipientsFile, setRecipientsFile] = useState<File | null>(null);
   const [certificateURL, setCertificateURL] = useState<string | null>(null);
@@ -30,6 +32,8 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const router = useRouter();
   const boxRef = useRef<HTMLDivElement>(null);
   const [selectedFontSize, setSelectedFontSize] = useState<number>(16);
+  const [certificateDemo, setCertificateDemo] = useState<any>(null);
+  const { setConfig, config } = React.use(AppContext);
 
   const handleFontSizeChange = (size: number) => {
     setSelectedFontSize(size);
@@ -110,6 +114,7 @@ setRecipientsFile(null)
         },
         certificateFile: certificateFileURL,
       };
+      setCertificateDemo(certificateDetails)
       const { data } = await customFetch("/certificates", {
         method: "POST",
         body: JSON.stringify(certificateDetails),
@@ -128,6 +133,7 @@ setRecipientsFile(null)
       if (!recipientsFile || !certificateId) {
         throw new Error("Please upload a recipients file and certificate");
       }
+      
       const recipipentFileUrl = await uploadRecipientFile(recipientsFile);
       const courseUpdate = {
         certificateId: certificateId,
@@ -142,6 +148,7 @@ setRecipientsFile(null)
       toast.success("Course saved successfully");
       onSave(response.data)
       reset()
+      setConfig({ fileChanged: false })
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error saving course");
@@ -156,7 +163,7 @@ setRecipientsFile(null)
     const boxHeight = 50;
     const x = e.clientX - containerRect.left - boxWidth / 2;
     const y = e.clientY - containerRect.top - boxHeight / 2;
-
+    
     setBox({ x, y, text: certificateTextTitle, width: boxWidth, height: boxHeight });
   };
 
@@ -223,10 +230,12 @@ setRecipientsFile(null)
       alert("Please upload a certificate.");
       return;
     }
+    setConfig({ loading: true })
 
-    saveCertificateDetails();
+   await saveCertificateDetails();
     setPopupVisible(false);
     router.refresh();
+    setConfig({ loading: false })
   };
 
   useEffect(() => {
@@ -241,6 +250,13 @@ setRecipientsFile(null)
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [box]);
+
+  useEffect(() => {
+    setConfig({ loading: false })
+    return () => {
+      setConfig({ loading: false })   
+     };
+  }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
@@ -277,6 +293,8 @@ setRecipientsFile(null)
           type="button"
           variant={"outline"}
           onClick={handleSaveCourse}
+          disabled={config?.loading || !config?.fileChanged}
+          loading={config?.loading}
         >
           Save Changes
         </Button>
@@ -297,7 +315,7 @@ setRecipientsFile(null)
             onBlur={handleBlur}
             isFocused={isFocused}
             onDragStart={handleDragStart}
-          />
+            />
         )}
       </form>
     </div>
@@ -305,3 +323,4 @@ setRecipientsFile(null)
 }
 
 export default GradeForm;
+

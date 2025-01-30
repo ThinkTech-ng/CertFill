@@ -12,6 +12,7 @@ import { LoadingAtom } from "@/components/atom/loading";
 import { CertificateNotFound } from "./not-found";
 import { Button } from "@/components/molecule/button";
 import { formatToCurrency } from "@/utils/utils";
+import { generateCertificatePdf } from "@/utils/handlePDF";
 import { toast } from "sonner";
 import PaystackPop from "@paystack/inline-js";
 import { env } from "@/components/../../env";
@@ -117,10 +118,9 @@ function CertificateContent({
   const printRef = React.useRef(null);
 
   const { data: { data: certificate } = {}, isLoading } = useQuery<any>({
-    queryKey: ["certificate-"],
     queryFn: async () => await fetchCertificate({ id }),
+    queryKey: []
   });
-  console.log(certificate, 'slsl')
 
   const previewText = "Certfill Preview Copy";
 
@@ -136,80 +136,12 @@ function CertificateContent({
 
   const handleDownloadPdf = async () => {
     try {
-      const response = await fetch(certificate.certificate.certificateFile);
-      const existingPdfBytes = await response.arrayBuffer();
+    const blob = await generateCertificatePdf({...certificate, ...certificate.certificate }, isFree, "Certfill Preview Copy");
+    const pdfUrl = URL.createObjectURL(blob);
+    window.open(pdfUrl, "_blank");
+ 
 
-      const pdfDoc = await PDFDocument.load(existingPdfBytes);
-      pdfDoc.registerFontkit(fontkit);
-
-
-      const fontUrl = `/fonts/${certificate.certificate.fontFamily}/bold.ttf`
-      const fontResponse = await fetch(fontUrl);
-if (!fontResponse.ok) throw new Error(`Failed to fetch font: ${fontResponse.statusText}`);
-const fontBytes = await fontResponse.arrayBuffer();
-
-console.log("Font file size:", fontBytes.byteLength); // Debug: Check if font is loaded
-if (fontBytes.byteLength === 0) throw new Error("Font file is empty!");
-
-      // const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
-      const font = await pdfDoc.embedFont(fontBytes);
-  
-      const pages = pdfDoc.getPages();
-      const firstPage = pages[0];
-      const { width: pageWidth, height: pageHeight } = firstPage.getSize();
-
-      if (!isFree) {
-        const prevTextFontSize = 80;
-        const prevTextWidth = font.widthOfTextAtSize(
-          previewText,
-          prevTextFontSize
-        );
-
-        const angle = -55;
-        const prevTextX = 0;
-        const prevTextY = pageHeight - 100;
-
-        firstPage.drawText(previewText, {
-          x: prevTextX,
-          y: prevTextY,
-          size: prevTextFontSize,
-          color: rgb(0.8, 0.8, 0.8),
-          rotate: { type: "degrees", angle },
-        });
-      }
-      const recipientName = certificate.recipient.name;
-      const recipientFontSize = certificate.certificate.fontSize || 16;
-      const recipientTextWidth = font.widthOfTextAtSize(
-        recipientName,
-        recipientFontSize
-      );
-
-      const iframeSize = {
-        top: certificate.certificate.position.y,
-                left: certificate.certificate.position.x,
-                width: 450,
-                height: 50,
-                fontSize: certificate.certificate.fontSize,
-                fontFamily: certificate.certificate.fontFamily,
-                color: "black",
-      }
-      // const recipientX = (pageWidth - recipientTextWidth) / 2;
-      // const recipientY = pageHeight - certificate.certificate.position.y;
-      const recipientX = (pageWidth - recipientTextWidth) / 2;
-      const recipientY = (pageHeight/1.29) - certificate.certificate.position.y;
-
-      firstPage.drawText(recipientName, {
-        x: recipientX,
-        y: recipientY - 17, // Adjusted Y position
-        size: recipientFontSize,
-        font,
-        color: rgb(0, 0, 0),
-      });
-
-      const pdfBytes = await pdfDoc.save();
-
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      saveAs(blob, (props.filename || 'Certificate') + ".pdf", );
+      // saveAs(blob, (props.filename || 'Certificate') + ".pdf", );
     } catch (error) {
       console.error("Error generating PDF:", error);
     }

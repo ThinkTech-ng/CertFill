@@ -1,4 +1,6 @@
 import React from "react";
+import { AppContext } from "@/service/context";
+
 interface FileUploadProps {
   label?: string;
   uploadText?: string;
@@ -8,6 +10,8 @@ interface FileUploadProps {
 export const FileUpload: React.FC<FileUploadProps> = (props) => {
   const inputId = React.useId();
   const inputRef = React.useRef(null);
+  const { setUser, removeUser, setConfig } = React.use(AppContext);
+
 
   const handleUploadClick = () => {
     const input = inputRef.current as unknown as HTMLInputElement;
@@ -18,6 +22,7 @@ export const FileUpload: React.FC<FileUploadProps> = (props) => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.onFileChange(event.target.files);
+    setConfig({ fileChanged: true })
   };
   return (
     <div

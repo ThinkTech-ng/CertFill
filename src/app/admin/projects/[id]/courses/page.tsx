@@ -19,6 +19,7 @@ import { Button } from "@/components/molecule/button";
 import { formatToCurrency } from "@/utils/utils";
 import PaystackPop from "@paystack/inline-js";
 import { toast } from "sonner";
+import { AppContext } from "@/service/context";
 
 interface ProgramDetails {
   name: string;
@@ -37,6 +38,7 @@ function ProgramDetailsPage() {
   const [sendEmail, setSendEmail] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<string | null>(null);
   const idempotencyKey = React.useId() + Date.now();
+  const { setConfig, config } = React.use(AppContext);
 
   const {
     data: program,
@@ -44,7 +46,6 @@ function ProgramDetailsPage() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["program-" + id],
     queryFn: () => getSinglePrograms(id as string),
   });
   const finalize = useMutation({
@@ -98,6 +99,14 @@ function ProgramDetailsPage() {
 
   console.log(mutation);
 
+  React.useEffect(()=>{
+    // if (config?.fileChanged || config.loading){
+      setConfig({ fileChanged: false, loading: false})
+    // }
+    // return ()=> setConfig({ fileChanged: false, loading: false})
+    
+  }, [])
+
   React.useEffect(() => {
     if (!program?.shortcode) return;
     router.prefetch(`../${program?.shortcode}/complete`);
@@ -116,10 +125,14 @@ function ProgramDetailsPage() {
     refetch();
   };
 
-  const totalRecipients = program?.courses?.reduce((acc, cur) => {
-    return acc + (cur?.recipients?.length || 0);
-  }, 0);
+  const {totalRecipients, noRecipientsNotPaid} = program?.courses?.reduce((acc, cur) => {
+     return {totalRecipients:acc.totalRecipients + (cur?.recipients?.length || 0), noRecipientsNotPaid: cur.noRecipientsNotPaid + acc.noRecipientsNotPaid}
+  }, {totalRecipients: 0, noRecipientsNotPaid: 0}) || {};
   const programPrice = Number(program?.price || 1000);
+
+  console.log(program);
+  const needToPay = program.paymentPlan === "issuer" && (!program.paymentComplete || noRecipientsNotPaid > 0);
+
 
   return (
     <div className="h-full grow bg-white text-black flex flex-col justify-between  max-sm:p-4 pb-20">
@@ -171,12 +184,13 @@ function ProgramDetailsPage() {
             mutation.isPending ||
             finalize.isPending ||
             (mutation.isSuccess && finalize.isSuccess)
+            || config?.fileChanged || config?.loading
           }
-          loading={mutation.isPending || finalize.isPending}
-          className="w-full h-[50px]"
+          loading={config?.loading || mutation.isPending || finalize.isPending || (mutation.isSuccess && finalize.isSuccess)}
+          className="w-full h-[50px] z-0"
           onClick={() => mutation.mutate({ id, sendEmail, idempotencyKey })}
         >
-          {program.paymentPlan === "issuer" && !program.paymentComplete
+          {needToPay
             ? "Proceed to make payment"
             : "Complete and Continue"}
         </Button>
@@ -184,10 +198,13 @@ function ProgramDetailsPage() {
         <p className="py-2 text-center">
           <span>
             You've successfully uploaded {formatToCurrency(totalRecipients)}{" "}
-            names. The total cost is
+            names. 
+            {programPrice * noRecipientsNotPaid > 0 && needToPay && <>
+            The total cost is
             <strong className="px-2">
-              ₦{formatToCurrency(programPrice * totalRecipients)}
+              ₦{formatToCurrency(programPrice * noRecipientsNotPaid)}
             </strong>
+            </>}
           </span>
         </p>
       </div>
