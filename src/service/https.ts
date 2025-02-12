@@ -94,8 +94,8 @@ fetchInterceptor.setRequestInterceptor(async (url, config) => {
       }
     }
   }
-  const user = safeJson(localStorage.getItem('user-login'), {})
-  config.headers['authorization'] = 'Bearer '+user.accessToken
+  const user = safeJson(localStorage.getItem('user-login'), {}) || {}
+  config.headers['authorization'] = 'Bearer '+user?.accessToken
   if (typeof config.body === 'string'){
     config.headers["Content-Type"] =   "application/json"
   }
