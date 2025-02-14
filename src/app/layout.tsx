@@ -10,7 +10,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/molecule/sonner";
 import AppLayout from "@/components/template/layout";
-import {AppProvider} from "@/service/context"
+import { AppProvider } from "@/service/context";
+import { Metadata } from "next";
+
 const generalSans = localFont({
   src: [
     {
@@ -87,6 +89,45 @@ const montserratFont = Montserrat({
   variable: "--font-montserrat",
 });
 
+export const metadata: Metadata = {
+  title: "Certfill - Your Certificate Management Solution",
+  description: "Manage and create certificates with Certfill.",
+  keywords: ["certificates", "management", "Certfill"],
+  viewport: "width=device-width, initial-scale=1",
+  openGraph: {
+    title: "Certfill - Your Certificate Management Solution",
+    description: "Manage and create certificates with Certfill.",
+    url: "https://www.certfill.com/",
+    type: "website",
+    images: [
+      {
+        url: "/public/images/image.png",
+        width: 800,
+        height: 600,
+        alt: "Certfill",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Certfill - Your Certificate Management Solution",
+    description: "Manage and create certificates with Certfill.",
+    images: ["/public/images/image.png"],
+  },
+  alternates: {
+    canonical: "https://www.certfill.com/",
+  },
+  // other: {
+  //   "application/ld+json": JSON.stringify({
+  //     "@context": "https://schema.org",
+  //     "@type": "Organization",
+  //     name: "Certfill",
+  //     url: "https://www.certfill.com/",
+  //     logo: "https://www.certfill.com/certLogo.svg",
+  //   }),
+  // },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -98,10 +139,10 @@ export default function RootLayout({
         className={`${generalSans.variable} ${interFont.variable} ${dancingFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable}`}
       >
         <AppProvider>
-        <AppLayout>
-          {children}
-          <Toaster richColors position="top-right" />
-        </AppLayout>
+          <AppLayout>
+            {children}
+            <Toaster richColors position="top-right" />
+          </AppLayout>
         </AppProvider>
       </body>
     </html>
