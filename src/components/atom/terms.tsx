@@ -9,7 +9,10 @@ export const TermAndCondition = ({ type }: { type: "register" | "login" }) => {
         Terms of Service
       </Link>{" "}
       and{" "}
-      <Link href="#" className="underline hover:text-foreground text-onyx">
+      <Link
+        href="https://docs.google.com/document/d/18L1wYp5HiNtuV-binbYa-HKrA_6xPZJ70f8zQBh-9sI/edit"
+        className="underline hover:text-foreground text-onyx"
+      >
         Privacy Policy
       </Link>
       .

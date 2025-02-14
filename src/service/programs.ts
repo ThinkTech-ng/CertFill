@@ -5,12 +5,16 @@ export const getMyPrograms = async () => {
   return data;
 };
 export const getProgramsCourses = async (params: Record<string, any>) => {
-  const { data } = await customFetch(`/programs/pub/${params.username}/${params.id}`);
+  const { data } = await customFetch(
+    `/programs/pub/${params.username}/${params.id}`
+  );
   return data;
 };
 
 export const getRecipientCourse = async (params: Record<string, any>) => {
-  const { data } = await customFetch(`/courses/pub/recipient/${params.username}`);
+  const { data } = await customFetch(
+    `/courses/pub/recipient/${params.username}`
+  );
   return data;
 };
 
@@ -35,27 +39,33 @@ export const confirmProgramSetup = async (data: Record<any, any>) => {
   return response;
 };
 
+export const deleteProgram = async (id: string) => {
+  await customFetch(`/programs/${id}`, {
+    method: "DELETE",
+  });
+};
+
 export const confirmProgramPayment = async (data: Record<any, any>) => {
-  const response = await customFetch(`/transaction/program/confirm-payment/${data.reference}`);
+  const response = await customFetch(
+    `/transaction/program/confirm-payment/${data.reference}`
+  );
   return response;
 };
 
 export const fetchCertificate = async (data: Record<any, any>) => {
-  return await customFetch(
-    `/certificates/certificates/${data.id}`)
+  return await customFetch(`/certificates/certificates/${data.id}`);
 };
 
 export const fetchUserCertificate = async (data: Record<any, any>) => {
-  return await customFetch(
-    `/certificates/my/${data.id}`)
+  return await customFetch(`/certificates/my/${data.id}`);
 };
 
 export const generateRecipientPayment = async (data: Record<any, any>) => {
-  return await customFetch(
-    `/transaction/certificate/${data.id}`)
+  return await customFetch(`/transaction/certificate/${data.id}`);
 };
 
 export const completeRecipientPayment = async (data: Record<any, any>) => {
   return await customFetch(
-    `/transaction/certificate/${data.reference || data.id}/complete`)
+    `/transaction/certificate/${data.reference || data.id}/complete`
+  );
 };

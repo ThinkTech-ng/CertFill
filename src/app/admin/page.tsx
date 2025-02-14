@@ -6,43 +6,74 @@ import logo from "@/public/certLogo.svg";
 import Projects from "./projects";
 import AppLayout from "@/components/template/layout";
 import { AppContext } from "@/service/context";
-import React from "react";
+import React, { useState } from "react";
 import { LoginUser } from "@/interface/user.dto";
 import { InfoCard, ListCard } from "@/components/molecule/info-card";
 import { Button } from "@/components/molecule/button";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { getMyPrograms } from "@/service/programs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getMyPrograms, deleteProgram } from "@/service/programs";
 import { LoaderCircleIcon } from "lucide-react";
 import { formatToSocialMediaNumber } from "@/utils/utils";
 import { LoadingAtom } from "@/components/atom/loading";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/molecule/confirm-modal";
 
 export default function Admin() {
   const { user } = React.use(AppContext);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [programToDelete, setProgramToDelete] = useState<string | null>(null);
 
   const { data: { programs, stats } = {}, isLoading } = useQuery({
     queryKey: ["programs"],
     queryFn: getMyPrograms,
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteProgram,
+    onSuccess: () => {
+      queryClient.invalidateQueries("programs");
+      toast.success("Program deleted successfully!");
+      setIsModalOpen(false);
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to delete program: ${error.message}`);
+      setIsModalOpen(false);
+    },
+  });
+
   const actions = [
     { text: "Edit" },
     { text: "Delete", className: "text-red-600" },
   ];
-  const onAction = (program: Record<string, any>) => async (data: Record<string, any>) => {
-    if (data.action.text === 'Edit'){
-      toast.info(`Opening program, please wait.`)
-        router.push(`/admin/projects/${program._id}/courses`)
-        return
+
+  const onAction =
+    (program: Record<string, any>) => async (data: Record<string, any>) => {
+      if (data.action.text === "Edit") {
+        toast.info(`Opening program, please wait.`);
+        router.push(`/admin/projects/${program._id}/courses`);
+        return;
+      }
+      if (data.action.text === "Delete") {
+        setProgramToDelete(program._id);
+        setIsModalOpen(true);
+      }
+    };
+
+  const handleConfirmDelete = () => {
+    if (programToDelete) {
+      deleteMutation.mutate(programToDelete);
     }
   };
-  React.useEffect(()=>{
-    router.prefetch('/admin/projects/create')
-    router.prefetch('/admin/projects/any/courses')
-  }, [])
+
+  React.useEffect(() => {
+    router.prefetch("/admin/projects/create");
+    router.prefetch("/admin/projects/any/courses");
+  }, []);
+
   return (
     <div className="min-h-screen h-full p-5 py-0">
       <span className="text-2xl sm:text-3xl">
@@ -75,9 +106,7 @@ export default function Admin() {
         </div>
       )}
 
-      {isLoading && (
-        <LoadingAtom />
-      )}
+      {isLoading && <LoadingAtom />}
 
       {programs?.length > 0 && (
         <div className="flex items-center gap-5 pt-10 pb-5">
@@ -90,6 +119,7 @@ export default function Admin() {
         {programs?.map?.((program) => {
           return (
             <ListCard
+              key={program._id}
               title={program.name}
               actions={actions}
               onAction={onAction(program)}
@@ -97,6 +127,13 @@ export default function Admin() {
           );
         })}
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        message="Are you sure you want to delete this program?"
+      />
     </div>
   );
 }
