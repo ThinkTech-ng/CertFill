@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       body: new URLSearchParams({
         code,
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-        client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!, // Kept secure on server
+        client_secret: process.env.GOOGLE_CLIENT_SECRET!, // Kept secure on server
         redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
         grant_type: "authorization_code",
       }),
