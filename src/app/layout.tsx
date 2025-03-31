@@ -11,7 +11,7 @@ import "./globals.css";
 import { Toaster } from "@/components/molecule/sonner";
 import AppLayout from "@/components/template/layout";
 import { AppProvider } from "@/service/context";
-import { Metadata } from "next";
+
 
 const generalSans = localFont({
   src: [
