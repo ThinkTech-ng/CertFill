@@ -162,10 +162,11 @@ function ProgramDetailsPage() {
         >
           Add Learning Track / Course
         </button>
-        <div className="flex justify-between items-center py-3">
+        {/* TODO: enable it later */}
+        {/* <div className="flex justify-between items-center py-3">
           <span>Send to individual mails</span>
           <Switch checked={sendEmail} onCheckedChange={setSendEmail} />
-        </div>
+        </div> */}
         <Button
           disabled={
             mutation.isPending ||
