@@ -22,12 +22,15 @@ import { TermAndCondition } from "@/components/atom/terms";
 interface AuthFormProps {
   registerForm: FormField[];
   loginForm: FormField[];
-  handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
+  handleSubmit: (
+    type: AuthFormType
+  ) => (form: UseFormReturn) => SubmitHandler<Record<string, any>>;
+  handleGoogle: () => void;
+  googleLoading: boolean;
 }
 export default function AuthForm(props: AuthFormProps) {
+  const search = useSearchParams();
 
-  const search = useSearchParams()
-  
   const renderFormTemplate = (
     formTemplate: FormField[],
     template: AuthFormType
@@ -36,6 +39,8 @@ export default function AuthForm(props: AuthFormProps) {
       <Button
         variant="outline"
         className="w-full h-[46px] text-base font-normal"
+        onClick={props.handleGoogle}
+        disabled={props.googleLoading}
       >
         <Image
           src={googleIcon}
@@ -44,7 +49,10 @@ export default function AuthForm(props: AuthFormProps) {
           height={20}
           className="mr-2"
         />
-        <span className="text-black font-medium text-sm">Continue with Google</span>
+        <span className="text-black font-medium text-sm">
+          {props.googleLoading ? "Signing in..." : "Continue with Google"}{" "}
+          {/* Show loading text */}
+        </span>
       </Button>
 
       <br />
@@ -73,7 +81,7 @@ export default function AuthForm(props: AuthFormProps) {
               disabled={!form.formState.isValid || form.formState.isSubmitting}
               className="w-full h-[46px] text-base  mt-4"
             >
-              {template === 'login' ? "Login to Account": "Create Account"}
+              {template === "login" ? "Login to Account" : "Create Account"}
             </Button>
           </>
         )}
@@ -83,7 +91,10 @@ export default function AuthForm(props: AuthFormProps) {
   return (
     <div className="container relative min-h-screen flex items-center justify-center">
       <div className="mx-auto w-full max-w-[440px] space-y-6 min-h-[700px]">
-        <Tabs defaultValue={search.get('action')=== 'login' ?"login" : "register"} className="w-full pb-7 mb-4">
+        <Tabs
+          defaultValue={search.get("action") === "login" ? "login" : "register"}
+          className="w-full pb-7 mb-4"
+        >
           <TabsList className="w-full grid grid-cols-2 mb-8 bg-transparent">
             <TabsTrigger
               value="login"
