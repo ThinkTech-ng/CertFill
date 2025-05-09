@@ -6,14 +6,17 @@ import { FileUpload } from "@/components/molecule/file-upload";
 import FontSelector from "./font-selector";
 import FontSizeSelector from "./font-size-selector";
 import { Stage, Layer, Text, Image as KonvaImage } from 'react-konva';
+import AlignmentSelector from "./alignment-selector";
 
 interface CertificateUploadPopupProps {
   certificateURL: string;
   onSave: (stageData: any) => void;
   selectedFont: string;
   selectedFontSize: number;
+  selectedAlignment: string;
   onFontChange: (font: string) => void;
   onFontSizeChange: (size: number) => void;
+  onAlignmentChange: (alignment: string) => void;
   handleFileChange: (files: FileList | null) => void
 }
 
@@ -22,8 +25,10 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
   onSave,
   selectedFont,
   selectedFontSize,
+  selectedAlignment,
   onFontChange,
   onFontSizeChange,
+  onAlignmentChange,
   handleFileChange
 }) => {
   const [mounted, setMounted] = useState(false);
@@ -56,19 +61,6 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
     };
     loadImage();
   }, []);
-
-  const resetTextPosition = () => {
-    const stage = stageRef.current;
-    const text = textRef.current;
-    if (stage && text) {
-      const centerX = stage.width() / 2;
-      const centerY = stage.height() / 2; 
-      text.x(centerX);
-      text.y(centerY);
-      text.offsetX(text.width() / 2);
-      text.offsetY(text.height() / 2);
-    }
-  }
 
   const handleTextDragged = () => {
     // Get the position relative to the canvas
@@ -113,7 +105,26 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
         }
       });
 
-      onSave(stage.clone());
+      onSave(stage.clone().scale({ x: 1, y: 1 }).position({ x: 0, y: 0 }).batchDraw());
+    }
+  }
+
+  const zoomStage = (scaleBy: number, isZoomIn: boolean) => {
+    const stage = stageRef.current;
+    if (stage) {
+      const oldScale = stage.scaleX();
+      const newScale = isZoomIn ? oldScale * scaleBy : oldScale / scaleBy;
+      stage.scale({ x: newScale, y: newScale });
+      stage.batchDraw();
+    }
+  }
+
+  const resetZoom = () => {
+    const stage = stageRef.current;
+    if (stage) {
+      stage.scale({ x: 1, y: 1 });
+      stage.position({ x: 0, y: 0 });
+      stage.batchDraw();
     }
   }
 
@@ -134,9 +145,10 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
           </div>
           <div className="w-full flex gap-5">
             <FontSelector selectedFont={selectedFont} onFontChange={onFontChange} />
+            <AlignmentSelector selectedAlignment={selectedAlignment} onAlignmentChange={onAlignmentChange} />
             <FontSizeSelector selectedFontSize={selectedFontSize} onFontSizeChange={onFontSizeChange} />
           </div>
-          <div className="flex gap-5">
+          <div className="flex items-center justify-between">
             <button
               type="button"
               onClick={saveStage}
@@ -144,14 +156,39 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
             >
               Save and Exit
             </button>
+            <div className="top-2 right-2 flex gap-2 z-10">
+              <button 
+                onClick={() => zoomStage(1.2, true)}
+                className="bg-certFillBlue text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md"
+              >
+                <span className="text-xl font-medium">+</span>
+              </button>
+              <button 
+                onClick={() => zoomStage(1.2, false)}
+                className="bg-certFillBlue text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md"
+              >
+                <span className="text-xl font-medium">-</span>
+              </button>
+              <button 
+                onClick={resetZoom}
+                className="bg-[red] text-white w-8 h-8 px-[29px] rounded-full flex items-center justify-center shadow-md"
+              >
+                <span className="text-sm font-medium">Reset</span>
+              </button>
+            </div>
           </div>
 
           <div className="relative pdf-container w-full h-full max-h-[500px] overflow-scroll">
-            <Stage ref={stageRef} width={stageDimensions.width} height={stageDimensions.height}>
+            <Stage 
+              ref={stageRef} 
+              width={stageDimensions.width} 
+              height={stageDimensions.height}
+              draggable={true}
+            >
               <Layer>
                 {image && <KonvaImage image={image} width={stageDimensions.width} height={stageDimensions.height} />}
                 {<Text
-                    text="Name of the Recipient"
+                    text="Drag to Recipient Name Position"
                     x={stageDimensions.width/2}
                     y={stageDimensions.height/2}
                     fontFamily={selectedFont || "Arial"}

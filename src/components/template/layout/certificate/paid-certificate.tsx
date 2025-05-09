@@ -135,6 +135,17 @@ function CertificateContent({
       stageNode.find('Text').forEach((textNode: any) => {
         textNode.text(certificate?.recipient?.name)
         textNode.draggable(false)
+
+
+        if(cert?.alignment.toLowerCase() !== "left") {
+          // Center the text horizontally on the stage
+          const stage = textNode.getStage();
+          if (stage) {
+            textNode.x(stage.width() / 2);
+            textNode.offsetX(textNode.width() / 2); // Adjust anchor point for proper centering
+          }
+        }
+
       });
 
       // Add watermark text if this is a preview

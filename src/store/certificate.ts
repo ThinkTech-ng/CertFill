@@ -10,3 +10,5 @@ export const certificateFontFamily = [
     export const certificateFontSize = [14, 16, 18, 20, 24, 30, 38, 42, 50, 60]
 
     export const certificateTextTitle = "Their Full Name here"
+
+    export const certificateAlignment = ["Center", "Left"]

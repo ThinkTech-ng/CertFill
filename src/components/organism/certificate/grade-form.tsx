@@ -19,14 +19,15 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const [certificateId, setCertificateId] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedFont, setSelectedFont] = useState<string>("font-inter");
+  const [selectedAlignment, setSelectedAlignment] = useState<string>("Center");
   const router = useRouter();
   const [selectedFontSize, setSelectedFontSize] = useState<number>(20);
 
   const reset = ()=>{
     setCertificate(null)
-setCertificateURL(null);
-          setPopupVisible(false)
-setRecipientsFile(null)
+    setCertificateURL(null);
+    setPopupVisible(false)
+    setRecipientsFile(null)
   }
 
   const handleFileChange =
@@ -93,6 +94,7 @@ setRecipientsFile(null)
         fontSize: selectedFontSize,
         fontFamily: selectedFont,
         certificateFile: certificateFileURL,
+        alignment: selectedAlignment,
         canvasData: canvasData?.toJSON(),
       };
       const { data } = await customFetch("/certificates", {
@@ -194,6 +196,8 @@ setRecipientsFile(null)
             selectedFontSize={selectedFontSize}
             onFontChange={setSelectedFont}
             onFontSizeChange={setSelectedFontSize}
+            selectedAlignment={selectedAlignment}
+            onAlignmentChange={setSelectedAlignment}
           />
         )}
       </form>
