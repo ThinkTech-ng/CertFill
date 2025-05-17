@@ -8,6 +8,8 @@ interface FontSelectorProps {
 
 const FontSelector: React.FC<FontSelectorProps> = ({ selectedFont, onFontChange }) => {
   return (
+    <div className="flex flex-col gap-2">
+    <label>Font Name</label>
     <select
       id="font-selector"
       value={selectedFont}
@@ -23,6 +25,7 @@ const FontSelector: React.FC<FontSelectorProps> = ({ selectedFont, onFontChange 
         </option>
       ))}
     </select>
+    </div>
   );
 };
 

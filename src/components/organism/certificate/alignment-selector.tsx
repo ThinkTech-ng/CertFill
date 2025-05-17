@@ -8,21 +8,24 @@ interface AlignmentSelectorProps {
 
 const AlignmentSelector: React.FC<AlignmentSelectorProps> = ({ selectedAlignment, onAlignmentChange }) => {
   return (
-    <select
-      id="font-selector"
-      value={selectedAlignment}
-      onChange={(e) => onAlignmentChange(e.target.value)}
-      className="inputField block w-full flex-1"
-    >
-      <option value="" disabled>
-        Choose name print alignment
-      </option>
-       {certificateAlignment.map((alignment) => (
-        <option key={alignment} value={alignment}>
-          {alignment}
+    <div className="flex flex-col gap-2">
+      <label>NAME PLACEMENT</label>
+      <select
+        id="font-selector"
+        value={selectedAlignment}
+        onChange={(e) => onAlignmentChange(e.target.value)}
+        className="inputField block w-full flex-1"
+      >
+        <option value="" disabled>
+          Choose name print alignment
         </option>
-      ))}
-    </select>
+        {certificateAlignment.map((alignment) => (
+          <option key={alignment} value={alignment}>
+            {alignment}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 
