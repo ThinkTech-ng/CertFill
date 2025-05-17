@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 interface FileUploadProps {
   label?: string;
   uploadText?: string;
@@ -24,9 +24,7 @@ export const FileUpload: React.FC<FileUploadProps> = (props) => {
       className="inputField flex flex-row justify-between items-center h-[50px] mt-4"
       onClick={handleUploadClick}
     >
-      <label className="truncase flex-1  max-sm:text-base">
-        {props.label || "Select File"}
-      </label>
+      <label className="truncase flex-1  max-sm:text-base">{props.label || 'Select File'}</label>
       <input
         type="file"
         name={inputId}
@@ -36,11 +34,8 @@ export const FileUpload: React.FC<FileUploadProps> = (props) => {
         required
         ref={inputRef}
       />
-      <button
-        type="button"
-        className="bg-black px-9 py-2.5 text-white rounded-lg text-xs"
-      >
-        {props.uploadText || "Upload"}
+      <button type="button" className="bg-black px-9 py-2.5 text-white rounded-lg text-xs">
+        {props.uploadText || 'Upload'}
       </button>
     </div>
   );

@@ -1,49 +1,31 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/molecule/tabs";
-import { Input } from "@/components/molecule/input";
-import { Button } from "@/components/molecule/button";
-import { EyeIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import googleIcon from "@/public/icons/google-icon.svg";
-import { AuthFormType, FormField } from "@/interface/form.dto";
-import { SubmitHandler, UseFormReturn } from "react-hook-form";
-import DynamicForm from "@/components/organism/forms/dynamic";
-import { useRouter, useSearchParams } from "next/navigation";
-import { TermAndCondition } from "@/components/atom/terms";
+import * as React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/molecule/tabs';
+import { Input } from '@/components/molecule/input';
+import { Button } from '@/components/molecule/button';
+import { EyeIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import googleIcon from '@/public/icons/google-icon.svg';
+import { AuthFormType, FormField } from '@/interface/form.dto';
+import { SubmitHandler, UseFormReturn } from 'react-hook-form';
+import DynamicForm from '@/components/organism/forms/dynamic';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { TermAndCondition } from '@/components/atom/terms';
 
 interface AuthFormProps {
   registerForm: FormField[];
   loginForm: FormField[];
-  handleSubmit: (type: AuthFormType) => (form: UseFormReturn)=> SubmitHandler<Record<string, any>>;
+  handleSubmit: (type: AuthFormType) => (form: UseFormReturn) => SubmitHandler<Record<string, any>>;
 }
 export default function AuthForm(props: AuthFormProps) {
+  const search = useSearchParams();
 
-  const search = useSearchParams()
-  
-  const renderFormTemplate = (
-    formTemplate: FormField[],
-    template: AuthFormType
-  ) => (
+  const renderFormTemplate = (formTemplate: FormField[], template: AuthFormType) => (
     <>
-      <Button
-        variant="outline"
-        className="w-full h-[46px] text-base font-normal"
-      >
-        <Image
-          src={googleIcon}
-          alt="Google logo"
-          width={20}
-          height={20}
-          className="mr-2"
-        />
+      <Button variant="outline" className="w-full h-[46px] text-base font-normal">
+        <Image src={googleIcon} alt="Google logo" width={20} height={20} className="mr-2" />
         <span className="text-black font-medium text-sm">Continue with Google</span>
       </Button>
 
@@ -53,17 +35,12 @@ export default function AuthForm(props: AuthFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or set up with email
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Or set up with email</span>
         </div>
       </div>
       <br />
 
-      <DynamicForm
-        onSubmit={props.handleSubmit(template)}
-        formSettings={formTemplate}
-      >
+      <DynamicForm onSubmit={props.handleSubmit(template)} formSettings={formTemplate}>
         {(form) => (
           <>
             <TermAndCondition type={template} />
@@ -73,7 +50,7 @@ export default function AuthForm(props: AuthFormProps) {
               disabled={!form.formState.isValid || form.formState.isSubmitting}
               className="w-full h-[46px] text-base  mt-4"
             >
-              {template === 'login' ? "Login to Account": "Create Account"}
+              {template === 'login' ? 'Login to Account' : 'Create Account'}
             </Button>
           </>
         )}
@@ -83,7 +60,10 @@ export default function AuthForm(props: AuthFormProps) {
   return (
     <div className="container relative min-h-screen flex items-center justify-center">
       <div className="mx-auto w-full max-w-[440px] space-y-6 min-h-[700px]">
-        <Tabs defaultValue={search.get('action')=== 'login' ?"login" : "register"} className="w-full pb-7 mb-4">
+        <Tabs
+          defaultValue={search.get('action') === 'login' ? 'login' : 'register'}
+          className="w-full pb-7 mb-4"
+        >
           <TabsList className="w-full grid grid-cols-2 mb-8 bg-transparent">
             <TabsTrigger
               value="login"
@@ -99,11 +79,9 @@ export default function AuthForm(props: AuthFormProps) {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="register">
-            {renderFormTemplate(props.registerForm, "register")}
+            {renderFormTemplate(props.registerForm, 'register')}
           </TabsContent>
-          <TabsContent value="login">
-            {renderFormTemplate(props.loginForm, "login")}
-          </TabsContent>
+          <TabsContent value="login">{renderFormTemplate(props.loginForm, 'login')}</TabsContent>
         </Tabs>
       </div>
     </div>

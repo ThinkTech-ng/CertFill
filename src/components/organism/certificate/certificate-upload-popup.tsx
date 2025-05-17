@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 
-import FontSelector from "./font-selector";
-import FontSizeSelector from "./font-size-selector";
+import FontSelector from './font-selector';
+import FontSizeSelector from './font-size-selector';
 import { Stage, Layer, Text, Image as KonvaImage } from 'react-konva';
-import AlignmentSelector from "./alignment-selector";
-import ScaleButton from "./scale-button";
+import AlignmentSelector from './alignment-selector';
+import ScaleButton from './scale-button';
 import { Stage as KonvaStage } from 'konva/lib/Stage';
 import { Text as KonvaText } from 'konva/lib/shapes/Text';
 
@@ -19,7 +19,7 @@ interface CertificateUploadPopupProps {
   onFontChange: (font: string) => void;
   onFontSizeChange: (size: number) => void;
   onAlignmentChange: (alignment: string) => void;
-  handleFileChange: (files: FileList | null) => void
+  handleFileChange: (files: FileList | null) => void;
 }
 
 const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
@@ -34,7 +34,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
 }) => {
   const [mounted, setMounted] = useState(false);
 
-  const [stageDimensions, setStageDimensions] = useState({ width: 595, height: 842 });  
+  const [stageDimensions, setStageDimensions] = useState({ width: 595, height: 842 });
   const [image, setImage] = useState(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStage>(null);
@@ -48,12 +48,12 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
     const loadImage = async () => {
       const img = new window.Image();
       img.src = certificateURL;
-      img.crossOrigin = "anonymous"; // Add crossOrigin for external image URLs
-      img.onload = () => { 
-        setStageDimensions({ 
+      img.crossOrigin = 'anonymous'; // Add crossOrigin for external image URLs
+      img.onload = () => {
+        setStageDimensions({
           ...stageDimensions,
-          width: img.width, 
-          height: img.height 
+          width: img.width,
+          height: img.height,
         });
         setImage(img as any);
       };
@@ -71,28 +71,26 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
     }
   }, [zoomScale]);
 
-
-  const limitTextDragArea = (pos: { x: number, y: number }) => {
+  const limitTextDragArea = (pos: { x: number; y: number }) => {
     // Get text dimensions
     const textNode = textRef.current;
     if (!textNode) return pos;
-    
+
     const textWidth = textNode.width();
     const textHeight = textNode.height();
-    
+
     // Calculate boundaries to keep text within stage
     // Ensure text stays within stage with proper margins
     // Prevent text from going too far left or right
     const x = Math.max(textWidth / 2, Math.min(pos.x, stageDimensions.width - textWidth / 2));
     const y = Math.max(0, Math.min(pos.y, stageDimensions.height - textHeight));
-    
-    return {x, y};
-  }
+
+    return { x, y };
+  };
 
   const saveStage = () => {
     const stage = stageRef.current;
     if (stage) {
-
       // Ensure all image nodes have `src` set before saving
       stage.find('Image').forEach((node: any) => {
         const imageObj = node.image();
@@ -103,7 +101,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
 
       onSave(stage.clone().scale({ x: 1, y: 1 }).position({ x: 0, y: 0 }).batchDraw());
     }
-  }
+  };
 
   const zoomStage = (scaleBy: number, type: string) => {
     const stage = stageRef.current;
@@ -111,7 +109,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
       const oldScale = stage.scaleX();
       let newScale = 1;
 
-      switch(type) {
+      switch (type) {
         case 'zoomIn':
           newScale = oldScale * scaleBy;
           break;
@@ -123,66 +121,80 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
           break;
       }
 
-      setZoomScale(newScale);      
+      setZoomScale(newScale);
     }
-  }
+  };
 
   if (!mounted) return <div>Loading preview canvas...</div>;
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="w-[1240px] max-w-[90%] max-h-[90%] bg-white max-sm:flex-col-reverse justify-center gap-10 px-6 items-center overflow-scroll">
-
-      <div className="flex items-center justify-between py-2">
-        <h1>File Upload</h1>
-        <div className="top-2 right-2 flex gap-2 z-10">
-          <ScaleButton onClick={() => zoomStage(1.2, 'zoomIn')} type="zoomIn" />
-          <ScaleButton onClick={() => zoomStage(1.2, 'zoomOut')} type="zoomOut" />
-          <ScaleButton onClick={() => zoomStage(1, 'reset')} type="reset" backgroundColor="#F15F4B" />
+        <div className="flex items-center justify-between py-2">
+          <h1>File Upload</h1>
+          <div className="top-2 right-2 flex gap-2 z-10">
+            <ScaleButton onClick={() => zoomStage(1.1, 'zoomIn')} type="zoomIn" />
+            <ScaleButton onClick={() => zoomStage(1.1, 'zoomOut')} type="zoomOut" />
+            <ScaleButton
+              onClick={() => zoomStage(1, 'reset')}
+              type="reset"
+              backgroundColor="#F15F4B"
+            />
+          </div>
         </div>
-      </div>
 
-      <div ref={containerRef} className="relative pdf-container w-full h-full max-h-[500px] overflow-auto justify-center items-start pt-4">
-        <Stage 
-          ref={stageRef} 
-          width={stageDimensions.width} 
-          height={stageDimensions.height}
-          draggable={false}
+        <div
+          ref={containerRef}
+          className="relative pdf-container w-full h-full max-h-[500px] overflow-scroll flex items-center justify-center"
         >
-          <Layer>
-            {image && <KonvaImage image={image} width={stageDimensions.width} height={stageDimensions.height} />}
-            {<Text
-                text="Drag to Recipient Name Position"
-                x={stageDimensions.width/2}
-                y={stageDimensions.height/2}
-                fontFamily={selectedFont || "Arial"}
-                fontSize={selectedFontSize || 20}
-                fill="black"
-                id="nameTextHolder"
-                ref={textRef}
-                draggable={true}
-                // dragBoundFunc={limitTextDragArea}
-              />}
-          </Layer>
-        </Stage>
-      </div>
+          <Stage
+            ref={stageRef}
+            width={stageDimensions.width}
+            height={stageDimensions.height}
+            draggable={true}
+          >
+            <Layer>
+              {image && (
+                <KonvaImage
+                  image={image}
+                  width={stageDimensions.width}
+                  height={stageDimensions.height}
+                />
+              )}
+              {
+                <Text
+                  text="Drag to Recipient Name Position"
+                  x={stageDimensions.width / 2}
+                  y={stageDimensions.height / 2}
+                  fontFamily={selectedFont || 'Arial'}
+                  fontSize={selectedFontSize || 20}
+                  fill="black"
+                  id="nameTextHolder"
+                  ref={textRef}
+                  draggable={true}
+                  // dragBoundFunc={limitTextDragArea}
+                />
+              }
+            </Layer>
+          </Stage>
+        </div>
 
         <div className="flex flex-col gap-3 py-3">
           <div className="w-full flex gap-2 items-end justify-between">
-            <AlignmentSelector selectedAlignment={selectedAlignment} onAlignmentChange={onAlignmentChange} />
+            <AlignmentSelector
+              selectedAlignment={selectedAlignment}
+              onAlignmentChange={onAlignmentChange}
+            />
             <FontSelector selectedFont={selectedFont} onFontChange={onFontChange} />
-            <FontSizeSelector selectedFontSize={selectedFontSize} onFontSizeChange={onFontSizeChange} />
-            <button
-              type="button"
-              onClick={saveStage}
-              className="saveButton h-[56px] max-w-[388px]"
-            >
+            <FontSizeSelector
+              selectedFontSize={selectedFontSize}
+              onFontSizeChange={onFontSizeChange}
+            />
+            <button type="button" onClick={saveStage} className="saveButton h-[56px] max-w-[388px]">
               Save and Exit
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

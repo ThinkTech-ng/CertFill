@@ -1,12 +1,15 @@
-import React from "react";
-import { certificateAlignment } from "@/store/certificate";
+import React from 'react';
+import { certificateAlignment } from '@/store/certificate';
 
 interface AlignmentSelectorProps {
-    selectedAlignment: string;
-    onAlignmentChange: (alignment: string) => void;
+  selectedAlignment: string;
+  onAlignmentChange: (alignment: string) => void;
 }
 
-const AlignmentSelector: React.FC<AlignmentSelectorProps> = ({ selectedAlignment, onAlignmentChange }) => {
+const AlignmentSelector: React.FC<AlignmentSelectorProps> = ({
+  selectedAlignment,
+  onAlignmentChange,
+}) => {
   return (
     <div className="flex flex-col gap-2">
       <label>NAME PLACEMENT</label>

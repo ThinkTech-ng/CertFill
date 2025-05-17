@@ -1,11 +1,11 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../CertFill-api"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../CertFill-api",
+    },
+  ],
+  "settings": {},
 }

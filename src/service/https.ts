@@ -1,5 +1,6 @@
-import { env } from "@/../env";
-import { safeJson } from "@/utils/utils";
+'use client';
+import { env } from '@/../env';
+import { safeJson } from '@/utils/utils';
 
 type FetchInterceptor = {
   request: (url: string, config: RequestInit) => Promise<[string, RequestInit]>;
@@ -12,11 +13,11 @@ export const fetchInterceptor = (() => {
     response: async (response) => response, // Default pass-through
   };
 
-  let baseUrl = ""; // Default base URL
+  let baseUrl = ''; // Default base URL
   let defaultHeaders: Record<string, string> = {}; // Default headers
 
   const setBaseUrl = (url: string) => {
-    baseUrl = url.replace(/\/+$/, ""); // Remove trailing slashes
+    baseUrl = url.replace(/\/+$/, ''); // Remove trailing slashes
   };
 
   const setDefaultHeaders = (headers: Record<string, string>) => {
@@ -26,24 +27,22 @@ export const fetchInterceptor = (() => {
   const setRequestInterceptor = (
     interceptor: (
       url: string,
-      config: RequestInit & { params?: Record<string, any> }
-    ) => Promise<[string, RequestInit]>
+      config: RequestInit & { params?: Record<string, any> },
+    ) => Promise<[string, RequestInit]>,
   ) => {
     interceptors.request = interceptor;
   };
 
-  const setResponseInterceptor = (
-    interceptor: (response: Response) => Promise<Response>
-  ) => {
+  const setResponseInterceptor = (interceptor: (response: Response) => Promise<Response>) => {
     interceptors.response = interceptor;
   };
 
   const fetchWithInterceptor = async <T = any>(
     url: string,
-    config: RequestInit  & { params?: Record<string, any> } = {}
+    config: RequestInit & { params?: Record<string, any> } = {},
   ): Promise<T> => {
     try {
-      const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+      const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
       const headers: Record<any, any> = { ...defaultHeaders, ...config.headers };
       const [newUrl, newConfig] = await interceptors.request(fullUrl, {
         ...config,
@@ -54,13 +53,9 @@ export const fetchInterceptor = (() => {
 
       const modifiedResponse = await interceptors.response(response);
 
-      if (
-        modifiedResponse.headers
-          .get("Content-Type")
-          ?.includes("application/json")
-      ) {
-        if (modifiedResponse.ok) return await modifiedResponse.json() as Promise<T>;
-        throw await modifiedResponse.json() as Promise<T>;
+      if (modifiedResponse.headers.get('Content-Type')?.includes('application/json')) {
+        if (modifiedResponse.ok) return (await modifiedResponse.json()) as Promise<T>;
+        throw (await modifiedResponse.json()) as Promise<T>;
       }
 
       if (!modifiedResponse.ok) {
@@ -68,7 +63,7 @@ export const fetchInterceptor = (() => {
       }
       return modifiedResponse as unknown as T;
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error('Fetch error:', error);
       throw error;
     }
   };
@@ -84,23 +79,28 @@ export const fetchInterceptor = (() => {
 
 fetchInterceptor.setBaseUrl(env.API_BASE_URL as string);
 
-
 fetchInterceptor.setRequestInterceptor(async (url, config) => {
-  if (!config || !config.headers){
+  if (!config || !config.headers) {
     config = {
       ...(config || {}),
       headers: {
         ...(config?.headers || {}),
-      }
-    }
+      },
+    };
   }
-  const user = safeJson(localStorage.getItem('user-login'), {}) || {}
-  config.headers['authorization'] = 'Bearer '+user?.accessToken
-  if (typeof config.body === 'string'){
-    config.headers["Content-Type"] =   "application/json"
+
+  let token = '';
+  if (typeof window !== 'undefined') {
+    const user = safeJson(localStorage.getItem('user-login'), {}) || {};
+    token = user?.accessToken || '';
+  }
+
+  config.headers['authorization'] = 'Bearer ' + token;
+  if (typeof config.body === 'string') {
+    config.headers['Content-Type'] = 'application/json';
   }
   return [url, config];
 });
 
-export const customFetch = fetchInterceptor.fetch
-export default customFetch
+export const customFetch = fetchInterceptor.fetch;
+export default customFetch;

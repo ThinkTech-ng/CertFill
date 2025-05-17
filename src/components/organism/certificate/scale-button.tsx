@@ -1,42 +1,101 @@
 const ScaleButton = ({ onClick, type, backgroundColor = '#D0F9FF' }: any) => {
-
-    const scaleIcon = () => {
-        switch(type) {
-            case 'zoomIn':
-                return (
-                    <svg width="23" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 20.9999L16.65 16.6499" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M11 8V14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 11H14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                );
-            case 'zoomOut':
-                return (
-                    <svg width="23" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 20.9999L16.65 16.6499" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 11H14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                );
-            default:
-                return (
-                    <svg width="15" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M23 4V10H17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M1 20V14H7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M3.51 9.00008C4.01717 7.56686 4.87913 6.28548 6.01547 5.27549C7.1518 4.26551 8.52547 3.55984 10.0083 3.22433C11.4911 2.88883 13.0348 2.93442 14.4952 3.35685C15.9556 3.77928 17.2853 4.56479 18.36 5.64008L23 10.0001M1 14.0001L5.64 18.3601C6.71475 19.4354 8.04437 20.2209 9.50481 20.6433C10.9652 21.0657 12.5089 21.1113 13.9917 20.7758C15.4745 20.4403 16.8482 19.7346 17.9845 18.7247C19.1209 17.7147 19.9828 16.4333 20.49 15.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                );
-        }
+  const scaleIcon = () => {
+    switch (type) {
+      case 'zoomIn':
+        return (
+          <svg width="23" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M21 20.9999L16.65 16.6499"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M11 8V14"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 11H14"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      case 'zoomOut':
+        return (
+          <svg width="23" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M21 20.9999L16.65 16.6499"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 11H14"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      default:
+        return (
+          <svg width="15" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M23 4V10H17"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M1 20V14H7"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M3.51 9.00008C4.01717 7.56686 4.87913 6.28548 6.01547 5.27549C7.1518 4.26551 8.52547 3.55984 10.0083 3.22433C11.4911 2.88883 13.0348 2.93442 14.4952 3.35685C15.9556 3.77928 17.2853 4.56479 18.36 5.64008L23 10.0001M1 14.0001L5.64 18.3601C6.71475 19.4354 8.04437 20.2209 9.50481 20.6433C10.9652 21.0657 12.5089 21.1113 13.9917 20.7758C15.4745 20.4403 16.8482 19.7346 17.9845 18.7247C19.1209 17.7147 19.9828 16.4333 20.49 15.0001"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
     }
+  };
   return (
-    <span 
-        onClick={onClick}
-        className={`bg-[${backgroundColor}] text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md`}
+    <span
+      onClick={onClick}
+      className={`bg-[${backgroundColor}] text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md`}
     >
-        {scaleIcon()}
+      {scaleIcon()}
     </span>
-  )
-}
+  );
+};
 
 export default ScaleButton;
