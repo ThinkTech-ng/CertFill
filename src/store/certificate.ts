@@ -1,9 +1,9 @@
 export const certificateFontFamily = [
-  { class: 'font-inter', name: 'Inter' },
-  { class: 'font-roboto', name: 'Roboto' },
-  { class: 'font-lora', name: 'Lora' },
-  { class: 'font-poppins', name: 'Poppins' },
-  { class: 'font-montserrat', name: 'Montserrat' },
+  { class: 'inter', name: 'Inter' },
+  { class: 'roboto', name: 'Roboto' },
+  { class: 'lora', name: 'Lora' },
+  { class: 'poppins', name: 'Poppins' },
+  { class: 'montserrat', name: 'Montserrat' },
   // { class: "font-dancing-script", name: "Dancing Script" },
 ];
 

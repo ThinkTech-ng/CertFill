@@ -125,6 +125,13 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
     }
   };
 
+  const handleFontChange = (font: string) => {
+    const fontFamily = font.replace('font-', '');
+    onFontChange(font);
+    textRef.current?.fontFamily(fontFamily);
+    stageRef.current?.batchDraw();
+  };
+
   if (!mounted) return <div>Loading preview canvas...</div>;
 
   return (
@@ -185,7 +192,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
               selectedAlignment={selectedAlignment}
               onAlignmentChange={onAlignmentChange}
             />
-            <FontSelector selectedFont={selectedFont} onFontChange={onFontChange} />
+            <FontSelector selectedFont={selectedFont} onFontChange={handleFontChange} />
             <FontSizeSelector
               selectedFontSize={selectedFontSize}
               onFontSizeChange={onFontSizeChange}
