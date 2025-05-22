@@ -145,7 +145,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
 
         <div
           ref={containerRef}
-          className="relative pdf-container w-full h-full max-h-[500px] overflow-scroll flex items-center justify-center"
+          className="relative pdf-container w-full h-full max-h-[500px] overflow-scroll flex items-center justify-center py-4"
         >
           <Stage
             ref={stageRef}

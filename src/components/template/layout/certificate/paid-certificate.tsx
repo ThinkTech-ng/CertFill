@@ -200,6 +200,13 @@ function CertificateContent({
     return <CertificateNotFound />;
   }
 
+  const handleDownloadImage = async () => {
+    const response = await fetch(certImage);
+    const imageBytes = await response.arrayBuffer();
+    const blob = new Blob([imageBytes], { type: 'image/jpeg' });
+    saveAs(blob, 'certificate.jpg');
+  };
+
   const handleDownloadPdf = async () => {
     try {
       const response = await fetch(certImage);
@@ -249,7 +256,7 @@ function CertificateContent({
           loading={props.loading}
           disabled={props.disabled}
           className="font-semibold w-full h-[46px] text-base"
-          onClick={onDownload(handleDownloadPdf)}
+          onClick={onDownload(handleDownloadImage)}
         >
           {downloadBtnText}
         </Button>
