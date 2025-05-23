@@ -135,8 +135,8 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
   if (!mounted) return <div>Loading preview canvas...</div>;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="w-[1240px] max-w-[90%] max-h-[90%] bg-white max-sm:flex-col-reverse justify-center gap-10 px-6 items-center overflow-scroll">
+    <div className="fixed z-30 inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="w-[1240px] max-w-[90%] max-h-[95%] bg-white max-sm:flex-col-reverse justify-center gap-10 py-7 px-12 items-center overflow-scroll">
         <div className="flex items-center justify-between py-2">
           <h1>File Upload</h1>
           <div className="top-2 right-2 flex gap-2 z-10">
@@ -197,7 +197,11 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
               selectedFontSize={selectedFontSize}
               onFontSizeChange={onFontSizeChange}
             />
-            <button type="button" onClick={saveStage} className="saveButton h-[56px] max-w-[388px]">
+            <button
+              type="button"
+              onClick={saveStage}
+              className="saveButton  h-[56px] max-w-[388px]"
+            >
               Save and Exit
             </button>
           </div>

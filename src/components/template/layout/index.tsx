@@ -26,7 +26,7 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
       <div
         className={cn(
           'font-generalSans sm:h-full w-full sm:w-1/3 max-w-[735px]',
-          'justify-between flex flex-col lg:min-w-[500px] bg-colors-certFillBlue p-10 sm:p-20 text-white',
+          'justify-between flex flex-col lg:min-w-[650px] bg-colors-certFillBlue p-10 sm:p-20 text-white',
           {
             'max-sm:flex-col-reverse': app.config?.layout !== 'plain',
           },
@@ -43,7 +43,7 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
         )}
         {app.config?.layout !== 'plain' && (
           <>
-            <div className="flex flex-row items-center gap-6 max-sm:gap-4 max-sm:mx-auto">
+            <div className="flex flex-row items-center gap-6 max-sm:gap-4 max-sm:mx-auto pt-6 lg:pt-1">
               <span className="font-ttNorms font-bold uppercase tracking-[2.5px] text-[9px] max-sm:text-[5.7px]">
                 Powered by
               </span>
@@ -53,7 +53,7 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
         )}
         {app.config?.layout !== 'plain' && (
           <>
-            <div className="py-8 ">
+            <div className="py-8 lg:flex hidden ">
               <Image src={cert} alt="certificate" width={400} />
             </div>
             <div>
@@ -76,7 +76,7 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
           </div>
         )}
       </div>
-      <div className="sm:h-full overflow-auto grow bg-white py-15 px-2 sm:p-20 text-black">
+      <div className="sm:h-full overflow-auto grow  px-2 sm:p-20 text-black">
         <div className=" flex flex-col justify-between w-full h-full max-w-[600px] m-auto">
           <Suspense fallback={<LoadingAtom />}>{props.children}</Suspense>
         </div>

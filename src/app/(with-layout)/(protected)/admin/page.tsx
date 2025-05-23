@@ -72,19 +72,19 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen h-full p-5 py-0">
-      <span className="text-2xl sm:text-3xl">Welcome {user?.user?.name?.split(' ')[0]}!</span>
+      <span className="text-2xl sm:text-3xl">Hi {user?.user?.name?.split(' ')[0]}!</span>
 
       <div className="grid grid-cols-2 gap-2 pt-14 sm:pt-28 pb-14">
-        <InfoCard title={formatToSocialMediaNumber(stats?.count || 0)} description="programs" />
+        <InfoCard title={formatToSocialMediaNumber(stats?.count || 0)} description="Programs" />
         <InfoCard
           title={formatToSocialMediaNumber(0)}
-          description="downloads"
+          description="Downloads"
           className="bg-secondary"
         />
       </div>
 
       <Link href="/admin/projects/create">
-        <Button variant={'dotted'} className="font-medium p-6 w-full border-black">
+        <Button variant={'dotted'} className="font-medium p-6 w-full border-black text-xl">
           Create New Certificate
         </Button>
       </Link>
@@ -98,7 +98,7 @@ export default function Admin() {
 
       {programs?.length > 0 && (
         <div className="flex items-center gap-5 pt-10 pb-5">
-          <span className="font-medium">PAST PROGRAMS</span>
+          <span className="font-semibold text-xl tracking-[2px]">PAST PROGRAMS</span>
           <hr className="flex-1 border-jumbo" />
         </div>
       )}

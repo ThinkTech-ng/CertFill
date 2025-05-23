@@ -33,6 +33,7 @@ export default {
           certFillLightBlue: '#00A2B9',
         },
         certFillBlue: '#00A2BA',
+        certFillDarkBlue: '#0B1B24',
         onyx: '#444444',
         cloakGrey: '#636363',
         neptuneSDream: '#003566',

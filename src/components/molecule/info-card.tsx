@@ -19,12 +19,14 @@ export const InfoCard: React.FC<InfoCardProps> = (props) => {
   return (
     <div
       className={cn(
-        'rounded flex flex-col h-[140px] text-white justify-center text-left py-5 px-6 bg-primary',
+        'rounded-[10px] flex flex-col h-[140px] text-white justify-center text-left py-5 px-10 bg-primary',
         props.className,
       )}
     >
-      <span className={cn('text-4xl font-semibold', props.titleClassName)}>{props.title}</span>
-      <span className={cn(props.descriptionClassName)}>{props.description}</span>
+      <span className={cn('text-[40px] font-semibold mb-1', props.titleClassName)}>
+        {props.title}
+      </span>
+      <span className={cn('text-xl', props.descriptionClassName)}>{props.description}</span>
     </div>
   );
 };

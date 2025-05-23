@@ -24,10 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // }, [app]);
   return (
     <div className="h-full relative w-full">
-      <div className="absolute right-0">
+      <div className="absolute z-20 top-3 right-12 ">
         <DropdownMenu>
-          <DropdownMenuTrigger className="w-[50px] outline outline-0 flex justify-end">
-            <UserIcon className="p-3 cursor-pointer w-12 h-12" />
+          <DropdownMenuTrigger className="outline outline-0 flex justify-center py-3 ">
+            <UserIcon className=" cursor-pointer w-6 h-6" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>

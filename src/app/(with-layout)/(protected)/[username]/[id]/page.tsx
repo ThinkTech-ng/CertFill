@@ -108,8 +108,8 @@ export default function GetProgramCertificate() {
     <>
       <div className="flex flex-col gap-5 py-10 px-5 h-full justify-between">
         <div>
-          <h3 className="text-[40px] font-lighter  text-black">Welcome!</h3>
-          <p className="pb-10 text-[20px] w-[67%] min-w-[300px]  font-lighter">
+          <h3 className="lg:text-[40px] text-3xl font-lighter  text-black">Welcome!</h3>
+          <p className="lg:pb-20 pt-2 pb-5 lg:text-[20px] w-[80%] lg:w-[67%] min-w-[300px]  font-light text-sm">
             Select Your Program and Download Your Certificates Instantly!
           </p>
         </div>

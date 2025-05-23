@@ -15,6 +15,7 @@ import { Button } from '@/components/molecule/button';
 import { formatToCurrency } from '@/utils/utils';
 import PaystackPop from '@paystack/inline-js';
 import { toast } from 'sonner';
+import StageProgress from '@/components/atom/stageProgress';
 
 interface ProgramDetails {
   name: string;
@@ -94,6 +95,12 @@ function ProgramDetailsPage() {
 
   console.log(mutation);
 
+  useEffect(() => {
+    if (program?.courses?.length && !activeIndex) {
+      setActiveIndex(program.courses[0]._id);
+    }
+  }, [program, activeIndex]);
+
   React.useEffect(() => {
     if (!program?.shortcode) return;
     router.prefetch(`../${program?.shortcode}/complete`);
@@ -117,7 +124,10 @@ function ProgramDetailsPage() {
 
   return (
     <div className="h-full grow bg-white text-black flex flex-col justify-between  max-sm:p-4 pb-20">
-      <h1 className="text-2xl font-bold mb-4">{program?.name}</h1>
+      <h1 className="text-2xl font-medium mb-4">{program?.name}</h1>
+      <div className="pb-20 pt-8 w-full">
+        <StageProgress currentStage={2} stages={['Details', 'Upload', 'Payment', 'Done']} />
+      </div>
       <div className="mx-auto max-w-[700px] w-full">
         {' '}
         {program && (

@@ -12,10 +12,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/molecule/dropdown-menu';
+import StageProgress from '@/components/atom/stageProgress';
 import { Input } from '@/components/molecule/input';
-import customFetch from '@/service/https';
 import { createProgram } from '@/service/programs';
 import { toast } from 'sonner';
+
 export default function CreateProject() {
   const router = useRouter();
 
@@ -87,9 +88,11 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="p-5 pb-20 flex flex-col gap-5 h-full py-12 justify-between relative">
+    <div className="p-5 pb-20 flex flex-col gap-5 h-full justify-between relative ">
       <h2 className="text-2xl sm:text-3xl">Add programs or courses</h2>
-
+      <div className="pb-20 w-full">
+        <StageProgress currentStage={1} stages={['Details', 'Upload', 'Payment', 'Done']} />
+      </div>
       <DynamicForm
         onSubmit={onSubmit as any}
         formSettings={formSettings}
@@ -98,9 +101,9 @@ export default function CreateProject() {
       >
         {(form) => (
           <div className="pb-28">
-            <div className="absolute right-5 top-10 bg-white">
+            <div className="absolute right-3 top-3   z-20">
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-[50px] outline outline-0 flex justify-end pb-5">
+                <DropdownMenuTrigger className=" h-full py-3 outline outline-0 flex items-center justify-center ">
                   <Bolt />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-whiteout p-8 w-[300px] min-h-[300px] drop-shadow-xl sm:absolute right-0 sm:-mr-5">
@@ -136,7 +139,7 @@ export default function CreateProject() {
                 return (
                   <>
                     {array.fields.map((field, index) => (
-                      <div className="flex items-center gap-2  my-2.5 relative">
+                      <div className="flex items-center gap-2  my-2.5 relative" key={index}>
                         <Input
                           key={field.id}
                           className="h-[46px]"

@@ -1,7 +1,7 @@
 import { Inter, Roboto, Lora, Poppins, Montserrat, Dancing_Script } from 'next/font/google';
 import localFont from 'next/font/local';
 import '../globals.css';
-import { Toaster } from '@/components/molecule/sonner';
+
 import AppLayout from '@/components/template/layout';
 import { AppProvider } from '@/service/context';
 import { Metadata } from 'next';
