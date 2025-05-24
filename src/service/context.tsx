@@ -1,8 +1,17 @@
 'use client';
 import { LoginUser } from '@/interface/user.dto';
+import { safeJson } from '@/utils/utils';
 import React, { createContext, useState, useEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getMyPrograms } from './programs';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient();
 
@@ -58,18 +67,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppContext.Provider
-        value={{
-          user,
-          config,
-          setUser,
-          setConfig: handleConfig,
-          removeUser,
-        }}
-      >
-        {children}
-      </AppContext.Provider>
-    </QueryClientProvider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <QueryClientProvider client={queryClient}>
+        <AppContext.Provider
+          value={{
+            user,
+            config,
+            setUser,
+            setConfig: handleConfig,
+            removeUser,
+          }}
+        >
+          {children}
+        </AppContext.Provider>
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
   );
 };

@@ -120,7 +120,7 @@ function ProgramDetailsPage() {
   const totalRecipients = program?.courses?.reduce((acc, cur) => {
     return acc + (cur?.recipients?.length || 0);
   }, 0);
-  const programPrice = Number(program?.price || 1000);
+  const programPrice = Number(program?.price || 100);
 
   return (
     <div className="h-full grow bg-white text-black flex flex-col justify-between  max-sm:p-4 pb-20">
@@ -156,10 +156,11 @@ function ProgramDetailsPage() {
         <button type="button" className="inputField border-dashed text-center my-5 hidden">
           Add Learning Track / Course
         </button>
-        <div className="flex justify-between items-center py-3">
+        {/* TODO: enable it later */}
+        {/* <div className="flex justify-between items-center py-3">
           <span>Send to individual mails</span>
           <Switch checked={sendEmail} onCheckedChange={setSendEmail} />
-        </div>
+        </div> */}
         <Button
           disabled={
             mutation.isPending || finalize.isPending || (mutation.isSuccess && finalize.isSuccess)
