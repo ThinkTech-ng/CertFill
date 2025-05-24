@@ -1,5 +1,5 @@
-import React from "react";
-import { Button } from "./button";
+import React from 'react';
+import { Button } from './button';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -21,18 +21,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <div className="bg-white p-6 rounded shadow-lg">
         <p className="text-onyx">{message}</p>
         <div className="mt-4 flex justify-end gap-2">
-          <Button
-            onClick={onClose}
-            variant="secondary"
-            className="bg-cloakGrey text-white"
-          >
+          <Button onClick={onClose} variant="secondary" className="bg-cloakGrey text-white">
             Cancel
           </Button>
-          <Button
-            onClick={onConfirm}
-            variant="primary"
-            className="bg-certFillBlue text-white"
-          >
+          <Button onClick={onConfirm} variant="primary" className="bg-certFillBlue text-white">
             Confirm
           </Button>
         </div>

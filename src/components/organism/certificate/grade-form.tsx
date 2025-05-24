@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import customFetch from "@/service/https";
-import { Button } from "@/components/molecule/button";
-import { FileUpload } from "@/components/molecule/file-upload";
-import CertificateUploadPopup from "@/components/organism/certificate/certificate-upload-popup";
+import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import customFetch from '@/service/https';
+import { Button } from '@/components/molecule/button';
+import { FileUpload } from '@/components/molecule/file-upload';
+import CertificateUploadPopup from '@/components/organism/certificate/certificate-upload-popup';
 import { env } from '../../../../env';
-import { certificateTextTitle } from "@/store/certificate";
+import { certificateTextTitle } from '@/store/certificate';
 interface GradeFormProps {
   courseId: string;
-  onSave: (course: any)=> void
+  onSave: (course: any) => void;
 }
 
 function GradeForm({ courseId, onSave }: GradeFormProps) {
@@ -18,83 +18,71 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const [certificateURL, setCertificateURL] = useState<string | null>(null);
   const [certificateId, setCertificateId] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [box, setBox] = useState<{
-    x: number;
-    y: number;
-    text: string;
-    width: number;
-    height: number;
-  } | null>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [selectedFont, setSelectedFont] = useState<string>("font-inter");
+  const [selectedFont, setSelectedFont] = useState<string>('font-inter');
+  const [selectedAlignment, setSelectedAlignment] = useState<string>('Center');
   const router = useRouter();
-  const boxRef = useRef<HTMLDivElement>(null);
-  const [selectedFontSize, setSelectedFontSize] = useState<number>(16);
+  const [selectedFontSize, setSelectedFontSize] = useState<number>(20);
 
-  const handleFontSizeChange = (size: number) => {
-    setSelectedFontSize(size);
+  const reset = () => {
+    setCertificate(null);
+    setCertificateURL(null);
+    setPopupVisible(false);
+    setRecipientsFile(null);
   };
-  const reset = ()=>{
-    setCertificate(null)
-setCertificateURL(null);
-          setPopupVisible(false)
-setRecipientsFile(null)
-  }
 
-  const handleFileChange =
-    (name: "certificate" | "recipients") => (files: FileList | null) => {
-      const file = files?.[0];
-      if (file) {
-        if (name === "certificate") {
-          setCertificate(file);
-          const fileURL = URL.createObjectURL(file);
-          setCertificateURL(fileURL);
-          setPopupVisible(true);
-        } else if (name === "recipients") {
-          setRecipientsFile(file);
-        }
+  const handleFileChange = (name: 'certificate' | 'recipients') => (files: FileList | null) => {
+    const file = files?.[0];
+    if (file) {
+      if (name === 'certificate') {
+        setCertificate(file);
+        const fileURL = URL.createObjectURL(file);
+        setCertificateURL(fileURL);
+        setPopupVisible(true);
+      } else if (name === 'recipients') {
+        setRecipientsFile(file);
       }
-    };
+    }
+  };
 
   const uploadRecipientFile = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("recipients", file);
+    formData.append('recipients', file);
 
     try {
       const data = await customFetch(`/courses/${courseId}/upload-recipients`, {
-        method: "POST",
+        method: 'POST',
         body: formData,
       });
 
-      toast.success("Recipient file uploaded successfully:", data);
+      toast.success('Recipient file uploaded successfully:', data);
       return data.data;
     } catch (error) {
-      toast.error("Error uploading recipient file:", error);
+      toast.error('Error uploading recipient file:', error);
       throw error;
     }
   };
 
   const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("certificate", file);
+    formData.append('certificate', file);
 
     try {
       const data = await customFetch(`/certificates/upload-certificate`, {
-        method: "POST",
+        method: 'POST',
         body: formData,
       });
 
-      toast.success("Certificate file uploaded successfully");
+      toast.success('Certificate file uploaded successfully');
       return data.data;
     } catch (error) {
-      toast.error("Error uploading certificate file");
+      toast.error('Error uploading certificate file');
       throw error;
     }
   };
 
-  const saveCertificateDetails = async () => {
-    if (!certificate || !box) {
-      alert("Please upload a certificate and add a text box.");
+  const saveCertificateDetails = async (canvasData: any) => {
+    if (!certificate || !canvasData) {
+      alert('Please upload a certificate and add a text box.');
       return;
     }
 
@@ -104,29 +92,27 @@ setRecipientsFile(null)
         course: courseId,
         fontSize: selectedFontSize,
         fontFamily: selectedFont,
-        position: {
-          x: box.x,
-          y: box.y,
-        },
         certificateFile: certificateFileURL,
+        alignment: selectedAlignment,
+        canvasData: canvasData?.toJSON(),
       };
-      const { data } = await customFetch("/certificates", {
-        method: "POST",
+      const { data } = await customFetch('/certificates', {
+        method: 'POST',
         body: JSON.stringify(certificateDetails),
       });
 
-      console.log("Certificate details saved successfully:", data);
+      console.log('Certificate details saved successfully:', data);
       setCertificateId(data._id);
-      toast.success("Certificate details saved successfully");
+      toast.success('Certificate details saved successfully');
     } catch (error) {
-      console.error("Error saving certificate details:", error);
+      console.error('Error saving certificate details:', error);
     }
   };
 
   const handleSaveCourse = async () => {
     try {
       if (!recipientsFile || !certificateId) {
-        throw new Error("Please upload a recipients file and certificate");
+        throw new Error('Please upload a recipients file and certificate');
       }
       const recipipentFileUrl = await uploadRecipientFile(recipientsFile);
       const courseUpdate = {
@@ -134,122 +120,43 @@ setRecipientsFile(null)
         recipientsCsvFile: recipipentFileUrl,
       };
       const response = await customFetch(`/courses/${courseId}`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify(courseUpdate),
       });
 
-      console.log("Course saved successfully:", response.data);
-      toast.success("Course saved successfully");
-      onSave(response.data)
-      reset()
+      toast.success('Course saved successfully');
+      onSave(response.data);
+      reset();
     } catch (error) {
       console.log(error);
-      toast.error(error.message || "Error saving course");
+      toast.error(error?.message || 'Error saving course');
     }
   };
 
-  const handleAddBox = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (box) return;
-
-    const containerRect = e.currentTarget.getBoundingClientRect();
-    const boxWidth = 450;
-    const boxHeight = 50;
-    const x = e.clientX - containerRect.left - boxWidth / 2;
-    const y = e.clientY - containerRect.top - boxHeight / 2;
-
-    setBox({ x, y, text: certificateTextTitle, width: boxWidth, height: boxHeight });
-  };
-
-  const handleTextChange = (text: string) => {
-    setBox((prev) => (prev ? { ...prev, text } : null));
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
-  const handleFontChange = (font: string) => {
-    setSelectedFont(font);
-  };
-
-  const handleDragStart = (e: React.MouseEvent, corner: string) => {
-    e.preventDefault();
-
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    const initialX = box?.x ?? 0;
-    const initialY = box?.y ?? 0;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
-
-      let newX = initialX;
-      let newY = initialY;
-
-      if (corner === "top-left") {
-        newX = initialX + dx;
-        newY = initialY + dy;
-      } else if (corner === "top-right") {
-        newX = initialX + dx;
-        newY = initialY + dy;
-      } else if (corner === "bottom-left") {
-        newX = initialX + dx;
-        newY = initialY + dy;
-      } else if (corner === "bottom-right") {
-        newX = initialX + dx;
-        newY = initialY + dy;
-      }
-
-      setBox((prev) => (prev ? { ...prev, x: newX, y: newY } : null));
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mouseup", handleMouseUp);
-    document.addEventListener("mousemove", handleMouseMove);
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (stageData: any) => {
     if (!certificate) {
-      alert("Please upload a certificate.");
+      alert('Please upload a certificate.');
       return;
     }
 
-    saveCertificateDetails();
+    saveCertificateDetails(stageData);
     setPopupVisible(false);
     router.refresh();
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
-        setIsFocused(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [box]);
-
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
+        <span className="text-jumbo text-[13px] text-neptuneSDream">
+          Upload the certificate template image and position the name of the recipient text at the
+          desired position. The recommended size is around{' '}
+          <span className="font-weight-bold">842×595px</span>
+        </span>
         <FileUpload
-          label="Certificate File (.pdf)"
+          label="Certificate File (.png, .jpg, .jpeg)"
           uploadText=" Attach"
-          accept=".pdf"
-          onFileChange={handleFileChange("certificate")}
+          accept=".png, .jpg, .jpeg"
+          onFileChange={handleFileChange('certificate')}
         />
         <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
@@ -257,12 +164,11 @@ setRecipientsFile(null)
           label="Recipient File (.csv)"
           uploadText="Upload"
           accept=".csv"
-          onFileChange={handleFileChange("recipients")}
+          onFileChange={handleFileChange('recipients')}
         />
 
         <span className="text-jumbo text-[13px]">
-          Download the CSV template here to see the correct data format before
-          uploading.
+          Download the CSV template here to see the correct data format before uploading.
           <a
             href={env.RECIPIENT_SAMPLE_CSV}
             download
@@ -275,7 +181,7 @@ setRecipientsFile(null)
         <Button
           className="mt-3 w-fit capitalize py-5"
           type="button"
-          variant={"outline"}
+          variant={'outline'}
           onClick={handleSaveCourse}
         >
           Save Changes
@@ -283,20 +189,15 @@ setRecipientsFile(null)
 
         {popupVisible && certificateURL && (
           <CertificateUploadPopup
-          handleFileChange={handleFileChange('certificate')}
+            handleFileChange={handleFileChange('certificate')}
             certificateURL={certificateURL}
             onSave={handleSave}
-            onAddBox={handleAddBox}
-            box={box}
             selectedFont={selectedFont}
             selectedFontSize={selectedFontSize}
-            onFontChange={handleFontChange}
-            onFontSizeChange={handleFontSizeChange}
-            onTextChange={handleTextChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            isFocused={isFocused}
-            onDragStart={handleDragStart}
+            onFontChange={setSelectedFont}
+            onFontSizeChange={setSelectedFontSize}
+            selectedAlignment={selectedAlignment}
+            onAlignmentChange={setSelectedAlignment}
           />
         )}
       </form>

@@ -1,10 +1,7 @@
-import { AuthError } from "@/interface/error.dto";
-import { FormField } from "@/interface/form.dto";
+import { AuthError } from '@/interface/error.dto';
+import { FormField } from '@/interface/form.dto';
 
-export const validateDynamicFormError = (
-  errors: AuthError["errors"],
-  form: FormField[]
-) => {
+export const validateDynamicFormError = (errors: AuthError['errors'], form: FormField[]) => {
   const validationError = errors.reduce(
     (acc, { field, message }) => {
       const fieldName = form.find((f) => f.name === field)?.label || field;
@@ -16,7 +13,7 @@ export const validateDynamicFormError = (
     {
       fields: {} as Record<any, any>,
       message: [] as string[],
-    }
+    },
   );
-  return validationError
+  return validationError;
 };

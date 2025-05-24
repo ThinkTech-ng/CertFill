@@ -1,55 +1,54 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/utils/utils";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { OTPInput, OTPInputProps, SlotProps } from "input-otp";
+import { cn } from '@/utils/utils';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { OTPInput, OTPInputProps, SlotProps } from 'input-otp';
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'>>(
   ({ className, type, ...props }, ref) => {
     return (
       <input
         type={type}
         className={cn(
-          "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm inputField h-[50px]",
-          className
+          'disabled:cursor-not-allowed disabled:opacity-50 md:text-sm inputField h-[50px]',
+          className,
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
-Input.displayName = "Input";
+Input.displayName = 'Input';
 
 export { Input };
 
-export const PasswordInput = React.forwardRef<
-  HTMLInputElement,
-  React.ComponentProps<"input">
->((props, ref) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+export const PasswordInput = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'>>(
+  (props, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false);
 
-  return (
-    <div className="relative">
-      <Input
-        {...props as any}
-        type={showPassword ? "text" : "password"}
-        className={cn("h-[46px] pr-10", props.className)}
-        ref={ref}
-      />
-      <div
-        className="absolute cursor-pointer right-0 top-0 bottom-0 flex justify-center items-center h-full px-3 py-2"
-        onClick={() => setShowPassword(!showPassword)}
-      >
-        {showPassword ? (
-          <EyeIcon className="h-4 w-4 text-gray-600" />
-        ) : (
-          <EyeOffIcon className="h-4 w-4 text-gray-600" />
-        )}
+    return (
+      <div className="relative">
+        <Input
+          {...(props as any)}
+          type={showPassword ? 'text' : 'password'}
+          className={cn('h-[46px] pr-10', props.className)}
+          ref={ref}
+        />
+        <div
+          className="absolute cursor-pointer right-0 top-0 bottom-0 flex justify-center items-center h-full px-3 py-2"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? (
+            <EyeIcon className="h-4 w-4 text-gray-600" />
+          ) : (
+            <EyeOffIcon className="h-4 w-4 text-gray-600" />
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 function OtpInpuSlot(props: SlotProps) {
   return (
     <div
@@ -65,20 +64,16 @@ function OtpInpuSlot(props: SlotProps) {
         {props.char ?? props.placeholderChar}
       </div>
     </div>
-  )
+  );
 }
-export const OtpInput = React.forwardRef<
-  HTMLInputElement,
-  OTPInputProps 
->((props, ref) => {
-
+export const OtpInput = React.forwardRef<HTMLInputElement, OTPInputProps>((props, ref) => {
   return (
     <div className="relative max-sm:-ml-2">
       <OTPInput
         maxLength={6}
         ref={ref}
         containerClassName="group flex items-center has-[:disabled]:opacity-30"
-        {...props as any}
+        {...(props as any)}
         render={({ slots }) => (
           <>
             <div className="flex">

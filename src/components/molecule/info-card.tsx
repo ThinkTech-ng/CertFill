@@ -1,12 +1,12 @@
-import { cn } from "@/utils/utils";
+import { cn } from '@/utils/utils';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/molecule/dropdown-menu";
-import { CircleEllipsis } from "lucide-react";
-import React from "react";
+} from '@/components/molecule/dropdown-menu';
+import { CircleEllipsis } from 'lucide-react';
+import React from 'react';
 
 interface InfoCardProps {
   title?: string;
@@ -19,16 +19,14 @@ export const InfoCard: React.FC<InfoCardProps> = (props) => {
   return (
     <div
       className={cn(
-        "rounded flex flex-col h-[140px] text-white justify-center text-left py-5 px-6 bg-primary",
-        props.className
+        'rounded-[10px] flex flex-col h-[140px] text-white justify-center text-left py-5 px-10 bg-primary',
+        props.className,
       )}
     >
-      <span className={cn("text-4xl font-semibold", props.titleClassName)}>
+      <span className={cn('text-[40px] font-semibold mb-1', props.titleClassName)}>
         {props.title}
       </span>
-      <span className={cn(props.descriptionClassName)}>
-        {props.description}
-      </span>
+      <span className={cn('text-xl', props.descriptionClassName)}>{props.description}</span>
     </div>
   );
 };
@@ -47,10 +45,13 @@ interface ListCardProps {
 }
 export const ListCard: React.FC<ListCardProps> = (props) => {
   return (
-    <div className={cn("shadow-lg rounded-lg h-[70px] flex items-center justify-between my-3 px-4 py-4", props.className)}>
-      <span className={cn("truncate", props.titleClassName)}>
-        {props.title}
-      </span>
+    <div
+      className={cn(
+        'shadow-lg rounded-lg h-[70px] flex items-center justify-between my-3 px-4 py-4',
+        props.className,
+      )}
+    >
+      <span className={cn('truncate', props.titleClassName)}>{props.title}</span>
       {props.actions && props.actions.length && (
         <DropdownMenu>
           <DropdownMenuTrigger className="w-[50px] outline outline-0 flex justify-end">
@@ -63,7 +64,7 @@ export const ListCard: React.FC<ListCardProps> = (props) => {
                 className={action.className}
                 onClick={() => {
                   action?.onClick?.();
-                  props.onAction?.({action, data: props});
+                  props.onAction?.({ action, data: props });
                 }}
               >
                 {action.text}
