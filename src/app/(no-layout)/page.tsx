@@ -52,9 +52,13 @@ export default function Home() {
             >
               Sign in
             </Link>
-            <button className="border border-white w-56 text-center text-white px-8 py-3 rounded-lg font-medium text-base hover:border-transparent transition-all hover:text-certFillDarkBlue hover:bg-[#4DB6D2]">
+            <a
+              download
+              href="/How-Certfill-works.pdf"
+              className="border border-white w-56 text-center text-white px-8 py-3 rounded-lg font-medium text-base hover:border-transparent transition-all hover:text-certFillDarkBlue hover:bg-[#4DB6D2]"
+            >
               How it works
-            </button>
+            </a>
           </div>
         </div>
         <div className="flex-1 flex justify-center items-center translate-x-20 md:mt-0">
