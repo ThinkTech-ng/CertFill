@@ -16,16 +16,20 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
   const [certificate, setCertificate] = useState<File | null>(null);
   const [recipientsFile, setRecipientsFile] = useState<File | null>(null);
   const [certificateURL, setCertificateURL] = useState<string | null>(null);
+  const [recipientFileUrl, setRecipientFileUrl] = useState<string | null>(null);
+
   const [certificateId, setCertificateId] = useState<string | null>(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedFont, setSelectedFont] = useState<string>('font-inter');
   const [selectedAlignment, setSelectedAlignment] = useState<string>('Center');
   const router = useRouter();
   const [selectedFontSize, setSelectedFontSize] = useState<number>(20);
+  const [certificateName, setCertificateName] = useState<string | null>(null);
+  const [recipientsFileName, setRecipientsFileName] = useState<string | null>(null);
 
   const reset = () => {
     setCertificate(null);
-    setCertificateURL(null);
+
     setPopupVisible(false);
     setRecipientsFile(null);
   };
@@ -35,11 +39,13 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
     if (file) {
       if (name === 'certificate') {
         setCertificate(file);
+        setCertificateName(file.name);
         const fileURL = URL.createObjectURL(file);
         setCertificateURL(fileURL);
         setPopupVisible(true);
       } else if (name === 'recipients') {
         setRecipientsFile(file);
+        setRecipientsFileName(file.name);
       }
     }
   };
@@ -55,12 +61,19 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
       });
 
       toast.success('Recipient file uploaded successfully:', data);
+      setRecipientFileUrl(data.data); // <--- set state here
       return data.data;
     } catch (error) {
       toast.error('Error uploading recipient file:', error);
       throw error;
     }
   };
+
+  useEffect(() => {
+    if (recipientsFile) {
+      uploadRecipientFile(recipientsFile).catch(console.error);
+    }
+  }, [recipientsFile]);
 
   const uploadCertFile = async (file: File): Promise<string> => {
     const formData = new FormData();
@@ -109,15 +122,21 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
     }
   };
 
+  useEffect(() => {
+    if (certificateId && recipientFileUrl) {
+      // Automatically save course when both exist
+      handleSaveCourse();
+    }
+  }, [certificateId, recipientFileUrl]);
+
   const handleSaveCourse = async () => {
     try {
-      if (!recipientsFile || !certificateId) {
+      if (!recipientFileUrl || !certificateId) {
         throw new Error('Please upload a recipients file and certificate');
       }
-      const recipipentFileUrl = await uploadRecipientFile(recipientsFile);
       const courseUpdate = {
         certificateId: certificateId,
-        recipientsCsvFile: recipipentFileUrl,
+        recipientsCsvFile: recipientFileUrl,
       };
       const response = await customFetch(`/courses/${courseId}`, {
         method: 'PUT',
@@ -144,25 +163,32 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
     router.refresh();
   };
 
+  console.log(certificateURL, 'cert url');
+  console.log(certificateId, 'cert Id');
+  console.log(recipientFileUrl, 'recp url');
+  console.log(recipientsFile, 'rec file');
+  console.log(certificate, 'cert ');
+
   return (
     <div className="mx-auto flex w-full max-w-[700px] max-h-[500px]">
       <form className="w-full ">
-        <span className="text-jumbo text-[13px] text-neptuneSDream">
+        {/* <span className="text-jumbo text-[13px] text-neptuneSDream">
           Upload the certificate template image and position the name of the recipient text at the
           desired position. The recommended size is around{' '}
           <span className="font-weight-bold">842×595px</span>
-        </span>
+        </span> */}
+
         <FileUpload
-          label="Certificate File (.png, .jpg, .jpeg)"
-          uploadText=" Attach"
+          label={certificateURL ? `(${certificateName})` : 'Certificate File  (.png, .jpg, .jpeg) '}
+          uploadText={certificateURL ? 'Edit' : 'Attach'}
           accept=".png, .jpg, .jpeg"
           onFileChange={handleFileChange('certificate')}
         />
         <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
         <FileUpload
-          label="Recipient File (.csv)"
-          uploadText="Upload"
+          label={recipientFileUrl ? `(${recipientsFileName})` : 'Recipient File (.csv)'}
+          uploadText={recipientFileUrl ? 'Update' : 'Attach'}
           accept=".csv"
           onFileChange={handleFileChange('recipients')}
         />
@@ -178,14 +204,14 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
           </a>
         </span>
 
-        <Button
+        {/* <Button
           className="mt-3 w-fit capitalize py-5"
           type="button"
           variant={'outline'}
           onClick={handleSaveCourse}
         >
           Save Changes
-        </Button>
+        </Button> */}
 
         {popupVisible && certificateURL && (
           <CertificateUploadPopup
