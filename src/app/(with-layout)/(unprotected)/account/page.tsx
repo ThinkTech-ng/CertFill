@@ -19,7 +19,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 export default function Home() {
   const router = useRouter();
   const [, setTempEmail] = useSessionStorage('temp-email', null);
-  const { setUser, removeUser } = React.use(AppContext);
+  const { setUser, removeUser } = React.useContext(AppContext);
   const [isLoading, setIsLoading] = React.useState(false); // Add loading state
 
   const formSettings: FormField[] = [
@@ -125,7 +125,8 @@ export default function Home() {
         }
 
         setUser({ ...(response.data || {}), ...user } as unknown as LoginUser);
-        router.push(user.username && user.phone ? '/admin' : '/admin/profile');
+        console.log('Pushing to admin or profile page based on user data');
+        // router.push(user.username && user.phone ? '/admin' : '/admin/profile');
       } catch (e) {
         const error = e as AuthError;
         if (error.message == 'Validation failed') {

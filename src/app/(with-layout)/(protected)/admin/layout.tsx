@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span
                 onClick={() => {
                   app.removeUser();
-                  router.push('/');
+                  // router.push('/');
                 }}
                 className="flex gap-2"
               >

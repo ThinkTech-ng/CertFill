@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { ConfirmationModal } from '@/components/molecule/confirm-modal';
 
 export default function Admin() {
-  const { user } = React.use(AppContext);
+  const { user } = React.useContext(AppContext);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
