@@ -67,14 +67,13 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
       stage.scale({ x: zoomScale, y: zoomScale });
       stage.position({ x: 0, y: 0 });
       stage.batchDraw();
-      
+
       if (containerRef.current) {
         containerRef.current.style.width = `${stage.width() * zoomScale}px`;
         containerRef.current.style.height = `${stage.height() * zoomScale}px`;
       }
     }
   }, [zoomScale]);
-
 
   const saveStage = () => {
     const stage = stageRef.current;
@@ -124,7 +123,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
 
   return (
     <div className="fixed z-30 inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="w-[1240px] max-w-[90%] max-h-[95%] bg-white max-sm:flex-col-reverse justify-center gap-10 py-7 px-12 items-center overflow-scroll">
+      <div className="w-[1240px] max-w-[90%] h-[750px] bg-white max-sm:flex-col-reverse justify-center gap-10 py-7 px-12 items-center overflow-scroll">
         <div className="flex items-center justify-between py-2">
           <h1>File Upload</h1>
           <div className="top-2 right-2 flex gap-2 z-10">
@@ -138,9 +137,7 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
           </div>
         </div>
 
-        <div
-          className="relative pdf-container w-full h-full h-[500px] overflow-scroll flex items-center justify-center py-4"
-        >
+        <div className="relative pdf-container w-full  h-[500px] overflow-scroll flex items-center justify-center py-4">
           <div ref={containerRef} className="items-center">
             <Stage
               ref={stageRef}

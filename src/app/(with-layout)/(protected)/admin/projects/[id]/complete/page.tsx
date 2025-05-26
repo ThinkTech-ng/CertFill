@@ -38,14 +38,16 @@ export default function CompleteCourseSetup() {
       <div className=" w-full flex flex-col items-center justify-center">
         <Image src={ribbon} className=" h-[200px] max-sm:mx-auto" alt="certificate" />
 
-        <h3 className="text-[32px] font-semibold text-center">Success! </h3>
+        <h3 className="text-[32px] font-semibold text-center">Certificate link generated </h3>
 
-        <p className="text-center py-3">Your Certificate is Ready to Send</p>
+        <p className="text-center py-3">
+          Copy and share with your recipients for instant access to their personalized certificate.
+        </p>
 
         <div className="bg-[#F1FDFF] flex items-center justify-between px-4 py-2 rounded-sm text-base">
           <div className="pr-3">
             <span className="font-semibold">Certificate Link:</span>
-            <span> {url}</span>
+            <span className="px-4 text-ellipsis"> {url}</span>
           </div>
 
           <Copy

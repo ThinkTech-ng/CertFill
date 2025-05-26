@@ -176,7 +176,7 @@ function ProgramDetailsPage() {
         {/* { ' TODO': calculate for additional courses and students */}
         <p className="py-2 text-center">
           <span>
-            You've successfully uploaded {formatToCurrency(totalRecipients)} names. The total cost
+            You have successfully uploaded {formatToCurrency(totalRecipients)} names. The total cost
             is
             <strong className="px-2">₦{formatToCurrency(programPrice * totalRecipients)}</strong>
           </span>
