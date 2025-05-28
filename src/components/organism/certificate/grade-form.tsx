@@ -40,6 +40,7 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
       if (name === 'certificate') {
         setCertificate(file);
         setCertificateName(file.name);
+        console.log(file, 'cert file');
         const fileURL = URL.createObjectURL(file);
         setCertificateURL(fileURL);
         setPopupVisible(true);
@@ -179,7 +180,11 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
         </span> */}
 
         <FileUpload
-          label={certificateURL ? `(${certificateName})` : 'Certificate File  (.png, .jpg, .jpeg) '}
+          label={
+            certificateURL
+              ? `(${certificateName})`
+              : 'Upload your Certificate design  (.png, .jpg, .jpeg) '
+          }
           uploadText={certificateURL ? 'Edit' : 'Attach'}
           accept=".png, .jpg, .jpeg"
           onFileChange={handleFileChange('certificate')}
@@ -187,7 +192,9 @@ function GradeForm({ courseId, onSave }: GradeFormProps) {
         <span className="text-jumbo text-[13px]">Max size is 5mb</span>
 
         <FileUpload
-          label={recipientFileUrl ? `(${recipientsFileName})` : 'Recipient File (.csv)'}
+          label={
+            recipientFileUrl ? `(${recipientsFileName})` : 'Upload your Recipient List (.csv file)'
+          }
           uploadText={recipientFileUrl ? 'Update' : 'Attach'}
           accept=".csv"
           onFileChange={handleFileChange('recipients')}
