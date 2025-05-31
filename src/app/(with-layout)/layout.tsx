@@ -1,6 +1,7 @@
 import { Inter, Roboto, Lora, Poppins, Montserrat, Dancing_Script } from 'next/font/google';
 import localFont from 'next/font/local';
 import '../globals.css';
+import MobileWarning from './MobileWarning';
 
 import AppLayout from '@/components/template/layout';
 import { AppProvider } from '@/service/context';
@@ -125,8 +126,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body
-        className={`${generalSans.variable} ${interFont.variable} ${dancingFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable}`}
+        className={`z-0 ${generalSans.variable} ${interFont.variable} ${dancingFont.variable} ${robotoFont.variable} ${loraFont.variable} ${poppinsFont.variable} ${montserratFont.variable}`}
       >
+        <MobileWarning />
         <AppProvider>
           <AppLayout>{children}</AppLayout>
         </AppProvider>
