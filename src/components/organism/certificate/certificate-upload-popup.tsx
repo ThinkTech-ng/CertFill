@@ -67,26 +67,14 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
       stage.scale({ x: zoomScale, y: zoomScale });
       stage.position({ x: 0, y: 0 });
       stage.batchDraw();
-      // containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      if (containerRef.current) {
+        containerRef.current.style.width = `${stage.width() * zoomScale}px`;
+        containerRef.current.style.height = `${stage.height() * zoomScale}px`;
+      }
     }
   }, [zoomScale]);
 
-  const limitTextDragArea = (pos: { x: number; y: number }) => {
-    // Get text dimensions
-    const textNode = textRef.current;
-    if (!textNode) return pos;
-
-    const textWidth = textNode.width();
-    const textHeight = textNode.height();
-
-    // Calculate boundaries to keep text within stage
-    // Ensure text stays within stage with proper margins
-    // Prevent text from going too far left or right
-    const x = Math.max(textWidth / 2, Math.min(pos.x, stageDimensions.width - textWidth / 2));
-    const y = Math.max(0, Math.min(pos.y, stageDimensions.height - textHeight));
-
-    return { x, y };
-  };
 
   const saveStage = () => {
     const stage = stageRef.current;
@@ -151,39 +139,40 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
         </div>
 
         <div
-          ref={containerRef}
-          className="relative pdf-container w-full h-full max-h-[500px] overflow-scroll flex items-center justify-center py-4"
+          className="relative pdf-container w-full h-full h-[500px] overflow-scroll flex items-center justify-center py-4"
         >
-          <Stage
-            ref={stageRef}
-            width={stageDimensions.width}
-            height={stageDimensions.height}
-            draggable={true}
-          >
-            <Layer>
-              {image && (
-                <KonvaImage
-                  image={image}
-                  width={stageDimensions.width}
-                  height={stageDimensions.height}
-                />
-              )}
-              {
-                <Text
-                  text="Drag to Recipient Name Position"
-                  x={stageDimensions.width / 2}
-                  y={stageDimensions.height / 2}
-                  fontFamily={selectedFont || 'Arial'}
-                  fontSize={selectedFontSize || 20}
-                  fill="black"
-                  id="nameTextHolder"
-                  ref={textRef}
-                  draggable={true}
-                  // dragBoundFunc={limitTextDragArea}
-                />
-              }
-            </Layer>
-          </Stage>
+          <div ref={containerRef} className="items-center">
+            <Stage
+              ref={stageRef}
+              width={stageDimensions.width}
+              height={stageDimensions.height}
+              draggable={false}
+            >
+              <Layer>
+                {image && (
+                  <KonvaImage
+                    image={image}
+                    width={stageDimensions.width}
+                    height={stageDimensions.height}
+                  />
+                )}
+                {
+                  <Text
+                    text="Drag to Recipient Name Position"
+                    x={stageDimensions.width / 2}
+                    y={stageDimensions.height / 2}
+                    fontFamily={selectedFont || 'Arial'}
+                    fontSize={selectedFontSize || 20}
+                    fill="black"
+                    id="nameTextHolder"
+                    ref={textRef}
+                    draggable={true}
+                    // dragBoundFunc={limitTextDragArea}
+                  />
+                }
+              </Layer>
+            </Stage>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3 py-3">
