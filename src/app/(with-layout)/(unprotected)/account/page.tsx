@@ -91,7 +91,7 @@ export default function Home() {
         } as unknown as LoginUser);
 
         // Redirect the user to the appropriate page
-        // router.push(user.username && user.phone ? '/admin' : '/admin/profile');
+        router.push(user.username && user.phone ? '/admin' : '/admin/profile');
       } catch (error) {
         console.error('Google authentication error:', error);
         toast.error('Google Sign-In failed');
@@ -126,7 +126,7 @@ export default function Home() {
 
         setUser({ ...(response.data || {}), ...user } as unknown as LoginUser);
         console.log('Pushing to admin or profile page based on user data');
-        // router.push(user.username && user.phone ? '/admin' : '/admin/profile');
+        router.push(user.username && user.phone ? '/admin' : '/admin/profile');
       } catch (e) {
         const error = e as AuthError;
         if (error.message == 'Validation failed') {

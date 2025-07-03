@@ -2,6 +2,7 @@ import { Inter, Roboto, Lora, Poppins, Montserrat, Dancing_Script } from 'next/f
 import localFont from 'next/font/local';
 import '../globals.css';
 import MobileWarning from './MobileWarning';
+import { Toaster } from '@/components/molecule/sonner';
 
 import AppLayout from '@/components/template/layout';
 import { AppProvider } from '@/service/context';
@@ -132,7 +133,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <AppLayout>{children}</AppLayout>
         </AppProvider>
-        {/* <Toaster richColors position="top-right" /> */}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
