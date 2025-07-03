@@ -1,19 +1,12 @@
 'use client';
-import Image from 'next/image';
-import thinktech from '@/public/thinktechLogo.svg';
-import cert from '@/public/images/certImage.svg';
-import logo from '@/public/certLogo.svg';
-import Projects from './projects';
-import AppLayout from '@/components/template/layout';
+
 import { AppContext } from '@/service/context';
 import React, { useState } from 'react';
-import { LoginUser } from '@/interface/user.dto';
 import { InfoCard, ListCard } from '@/components/molecule/info-card';
 import { Button } from '@/components/molecule/button';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMyPrograms, deleteProgram } from '@/service/programs';
-import { LoaderCircleIcon } from 'lucide-react';
 import { formatToSocialMediaNumber } from '@/utils/utils';
 import { LoadingAtom } from '@/components/atom/loading';
 import { useRouter } from 'next/navigation';
