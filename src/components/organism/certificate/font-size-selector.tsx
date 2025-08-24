@@ -11,7 +11,7 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold text-black uppercase">FONT SIZE</label>
+      <label className="text-sm font-medium text-gray-700">Font Size</label>
       <input
         type="number"
         value={selectedFontSize}

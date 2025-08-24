@@ -9,7 +9,7 @@ interface FontSelectorProps {
 const FontSelector: React.FC<FontSelectorProps> = ({ selectedFont, onFontChange }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold text-black uppercase">Font Name</label>
+      <label className="text-sm font-medium text-gray-700">Font Name</label>
       <div className="relative w-full">
         <select
           id="font-selector"
