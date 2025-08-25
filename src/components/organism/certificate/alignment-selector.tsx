@@ -12,7 +12,7 @@ const AlignmentSelector: React.FC<AlignmentSelectorProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold text-black uppercase">NAME PLACEMENT</label>
+      <label className="text-sm font-medium text-gray-700">Name Placement</label>
       <div className="relative w-full">
         <select
           id="font-selector"
