@@ -138,10 +138,55 @@ function CertificateContent({
       const stageNode = Konva.Node.create(cert?.canvasData, containerRef.current);
 
       stageNode.find('Text').forEach((textNode: any) => {
-        textNode.text(certificate?.recipient?.name);
+        const textId = textNode.id();
+        const recipient = certificate?.recipient;
+
+        // Helper function to get field value (case-insensitive)
+        const getFieldValue = (field: string) => {
+          return recipient?.[field] || recipient?.[field.toLowerCase()] || recipient?.[field.charAt(0).toUpperCase() + field.slice(1)];
+        };
+
+        // Map each field ID to actual recipient data
+        switch (textId) {
+          case 'name':
+            textNode.text(recipient?.name || 'Full Name of Recipient');
+            break;
+          case 'idNumber':
+            const idValue = getFieldValue('idNumber');
+            textNode.text(idValue ? `${idValue}` : 'N/A');
+            break;
+          case 'grade':
+            const gradeValue = getFieldValue('grade');
+            textNode.text(gradeValue || 'N/A');
+            break;
+          case 'instructor':
+            const instructorValue = getFieldValue('instructor');
+            textNode.text(instructorValue ? `${instructorValue}` : 'N/A');
+            break;
+          case 'custom1':
+            const custom1Value = getFieldValue('custom1');
+            textNode.text(custom1Value || 'N/A');
+            break;
+          case 'custom2':
+            const custom2Value = getFieldValue('custom2');
+            textNode.text(custom2Value || 'N/A');
+            break;
+          case 'verificationLink':
+            // Generate verification link based on certificate shortcode or ID
+            const verifyUrl = recipient?.shortcode
+              ? `certfill.com/verify/${recipient.shortcode}`
+              : `certfill.com/verify/${recipient?._id || 'N/A'}`;
+            textNode.text(verifyUrl);
+            break;
+          default:
+            // Keep original text for any unknown fields
+            break;
+        }
+
         textNode.draggable(false);
 
-        if (cert?.alignment.toLowerCase() !== 'left') {
+        // Only apply alignment to the main name field
+        if (textId === 'name' && cert?.alignment.toLowerCase() !== 'left') {
           // Center the text horizontally on the stage
           const stage = textNode.getStage();
           if (stage) {
@@ -184,7 +229,21 @@ function CertificateContent({
           imageNode.image(img);
           stageNode.batchDraw(); // Re-render stage after images load
 
-          const imageData = stageNode.toDataURL({ pixelRatio: 2 });
+          // Calculate pixel ratio to ensure HD quality for WhatsApp
+          // WhatsApp considers images HD if they're at least 1280px on the shorter side
+          const currentWidth = stageNode.width();
+          const currentHeight = stageNode.height();
+          const minDimension = Math.min(currentWidth, currentHeight);
+
+          // Calculate required pixel ratio for HD (minimum 1280px)
+          const hdPixelRatio = Math.max(4, Math.ceil(1280 / minDimension));
+
+          // High quality export settings optimized for WhatsApp HD
+          const imageData = stageNode.toDataURL({
+            pixelRatio: hdPixelRatio, // Ensure HD quality (minimum 1280px, using 4x for better quality)
+            mimeType: 'image/png',     // PNG for lossless quality
+            quality: 1                 // Maximum quality
+          });
           setCertImage(imageData);
           setViewReady(true);
         };
@@ -203,8 +262,8 @@ function CertificateContent({
   const handleDownloadImage = async () => {
     const response = await fetch(certImage);
     const imageBytes = await response.arrayBuffer();
-    const blob = new Blob([imageBytes], { type: 'image/jpeg' });
-    saveAs(blob, 'certificate.jpg');
+    const blob = new Blob([imageBytes], { type: 'image/png' });
+    saveAs(blob, 'certificate.png');
   };
 
   const handleDownloadPdf = async () => {
@@ -213,22 +272,23 @@ function CertificateContent({
       const imageBytes = await response.arrayBuffer();
 
       const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage();
 
       const pngImage = await pdfDoc.embedPng(imageBytes);
       const { width, height } = pngImage.size();
 
-      // Resize image to fit page if needed
-      const pdfWidth = page.getWidth();
-      const scale = pdfWidth / width;
-      const scaledWidth = width * scale;
-      const scaledHeight = height * scale;
+      // Create PDF page with exact certificate dimensions for best quality
+      // Convert pixels to points (1 point = 1/72 inch, assuming 96 DPI)
+      const pageWidth = width * 0.75;  // Convert pixels to points
+      const pageHeight = height * 0.75;
 
+      const page = pdfDoc.addPage([pageWidth, pageHeight]);
+
+      // Draw image at full size to maintain quality
       page.drawImage(pngImage, {
         x: 0,
-        y: page.getHeight() - scaledHeight, // y=0 is bottom, so flip
-        width: scaledWidth,
-        height: scaledHeight,
+        y: 0,
+        width: pageWidth,
+        height: pageHeight,
       });
 
       const pdfBytes = await pdfDoc.save();

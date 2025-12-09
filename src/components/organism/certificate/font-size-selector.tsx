@@ -10,15 +10,12 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   onFontSizeChange,
 }) => {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-gray-700">Font Size</label>
-      <input
-        type="number"
-        value={selectedFontSize}
-        onChange={(e) => onFontSizeChange(Number(e.target.value))}
-        className="inputField max-w-[75px] w-[50px]"
-      />
-    </div>
+    <input
+      type="number"
+      value={selectedFontSize}
+      onChange={(e) => onFontSizeChange(Number(e.target.value))}
+      className="w-full outline-none border border-[#888585] rounded-xl focus:border-[#00a2b9] h-8 text-[11px] px-2 py-1 text-black font-medium bg-white"
+    />
   );
 };
 
