@@ -17,9 +17,11 @@ interface CertificateUploadPopupProps {
   selectedFont: string;
   selectedFontSize: number;
   selectedAlignment: string;
+  otherFieldsAlignment: string;
   onFontChange: (font: string) => void;
   onFontSizeChange: (size: number) => void;
   onAlignmentChange: (alignment: string) => void;
+  onOtherFieldsAlignmentChange: (alignment: string) => void;
   handleFileChange: (files: FileList | null) => void;
 }
 
@@ -29,9 +31,11 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
   selectedFont,
   selectedFontSize,
   selectedAlignment,
+  otherFieldsAlignment,
   onFontChange,
   onFontSizeChange,
   onAlignmentChange,
+  onOtherFieldsAlignmentChange,
 }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -388,6 +392,13 @@ const CertificateUploadPopup: React.FC<CertificateUploadPopupProps> = ({
               {/* Other Placeholders Controls */}
               <div className="flex flex-col gap-1.5">
                 <h3 className="text-xs font-semibold text-gray-900 mb-1">OTHER FIELDS</h3>
+                <div className="flex items-center gap-2">
+                  <label className="text-[10px] text-gray-600 whitespace-nowrap">Placement:</label>
+                  <AlignmentSelector
+                    selectedAlignment={otherFieldsAlignment}
+                    onAlignmentChange={onOtherFieldsAlignmentChange}
+                  />
+                </div>
                 <div className="flex items-center gap-2">
                   <label className="text-[10px] text-gray-600 whitespace-nowrap">Font:</label>
                   <FontSelector selectedFont={otherPlaceholderFont} onFontChange={handleOtherPlaceholderFontChange} />

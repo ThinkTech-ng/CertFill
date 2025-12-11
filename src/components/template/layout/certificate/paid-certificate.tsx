@@ -194,6 +194,16 @@ function CertificateContent({
             textNode.offsetX(textNode.width() / 2); // Adjust anchor point for proper centering
           }
         }
+
+        // Apply alignment to all other fields
+        if (textId !== 'name' && cert?.otherFieldsAlignment?.toLowerCase() !== 'left') {
+          // Center the text horizontally on the stage
+          const stage = textNode.getStage();
+          if (stage) {
+            textNode.x(stage.width() / 2);
+            textNode.offsetX(textNode.width() / 2); // Adjust anchor point for proper centering
+          }
+        }
       });
 
       // Add watermark text if this is a preview
